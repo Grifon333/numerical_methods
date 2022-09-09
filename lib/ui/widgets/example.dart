@@ -68,7 +68,7 @@ class _ListButtons extends StatelessWidget {
                     : MaterialStateProperty.all(AppColors.buttonBG_disable),
               ),
               onPressed: index < 1
-                  ? () => Navigator.of(context).pushNamed('/laba${index + 1}')
+                  ? () => Navigator.of(context).pushNamed('/lab${index + 1}')
                   : null,
               child: Text(
                 'Laba ${index + 1}',
