@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:numerical_methods/ui/Navigation/main_navigation.dart';
 
 class Lab1Widget extends StatelessWidget {
   const Lab1Widget({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _NavigationDrawer extends StatelessWidget {
           children: [
             buildHeader(context),
             SizedBox(height: 10),
-            buildMenuItems(),
+            buildMenuItems(context),
           ],
         ),
       ),
@@ -59,16 +60,16 @@ class _NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  Widget buildMenuItems() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10),
-    child: Column(
+  Widget buildMenuItems(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
           children: [
             ListTile(
               title: Text(
                 'Product of a vector and a scalar',
                 style: TextStyle(fontSize: 16),
               ),
-              onTap: () {}, // Replacement
+              onTap: () => Navigator.of(context).pushNamed(mainNavigationNameRoute.lab1_1), // Replacement
             ),
             ListTile(
               title: Text(
@@ -139,5 +140,5 @@ class _NavigationDrawer extends StatelessWidget {
             ),
           ],
         ),
-  );
+      );
 }
