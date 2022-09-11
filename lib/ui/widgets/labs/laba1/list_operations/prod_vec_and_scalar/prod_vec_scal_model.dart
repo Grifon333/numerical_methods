@@ -43,6 +43,7 @@ class ProdVecScalModel extends ChangeNotifier {
 
   void resultCalculation() {
     if (_currentVectorForm == 'points') {
+      _resultVector = List<int>.filled(6, 0);
       for (int i = 0; i < _currentDimension; i++) {
         _resultVector[i] = (pointB[i] - pointA[i]) * (_scalar ?? 1);
       }

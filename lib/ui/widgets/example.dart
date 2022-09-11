@@ -71,7 +71,7 @@ class _ListButtons extends StatelessWidget {
                   ? () => Navigator.of(context).pushNamed('/lab${index + 1}')
                   : null,
               child: Text(
-                'Laba ${index + 1}',
+                'Lab ${index + 1}',
                 style: AppTextStyle.labaLabel,
               ),
             ),

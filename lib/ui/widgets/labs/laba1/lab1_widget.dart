@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:numerical_methods/ui/Navigation/main_navigation.dart';
+import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
+import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/lab1_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/prod_vec_and_scalar/prod_vec_scal_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/prod_vec_and_scalar/prod_vec_scal_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/sum_of_two_vectors/sum_of_two_vectors_widget.dart';
 
-class Lab1Widget extends StatelessWidget {
+class Lab1Widget extends StatefulWidget {
   const Lab1Widget({Key? key}) : super(key: key);
 
   @override
+  State<Lab1Widget> createState() => _Lab1WidgetState();
+}
+
+class _Lab1WidgetState extends State<Lab1Widget> {
+  @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab1Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -13,6 +26,19 @@ class Lab1Widget extends StatelessWidget {
         ),
       ),
       drawer: const _NavigationDrawer(),
+      body: IndexedStack(
+        index: model.selectedTab,
+        children: [
+          NotifierProvider(
+            child: const ProdVecScalWidget(),
+            create: () => ProdVecScalModel(),
+          ),
+          NotifierProvider(
+            child: const SumOfTwoVectorsWidget(),
+            create: () => SumOfTwoVectorsModel(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -30,7 +56,7 @@ class _NavigationDrawer extends StatelessWidget {
         child: Column(
           children: [
             buildHeader(context),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildMenuItems(context),
           ],
         ),
@@ -60,85 +86,96 @@ class _NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  Widget buildMenuItems(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            ListTile(
-              title: Text(
-                'Product of a vector and a scalar',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () => Navigator.of(context).pushNamed(mainNavigationNameRoute.lab1_1), // Replacement
+  Widget buildMenuItems(BuildContext context) {
+    final model = NotifierProvider.read<Lab1Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          ListTile(
+            title: const Text(
+              'Product of a vector and a scalar',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Sum of two vectors',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {
+              model.setSelectedTab(0);
+              Navigator.of(context).pop();
+            }, // Replacement
+          ),
+          ListTile(
+            title: const Text(
+              'Sum of two vectors',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Scalar product of vectors',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {
+              model.setSelectedTab(1);
+              Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            title: const Text(
+              'Scalar product of vectors',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Vector module',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
+              'Vector module',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Matrix transpose',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
+              'Matrix transpose',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Product of a matrix and a scalar',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
+              'Product of a matrix and a scalar',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Product of a matrix and a vector',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
+              'Product of a matrix and a vector',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Sum of two matrices',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
+              'Sum of two matrices',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Product of two matrices',
-                style: TextStyle(fontSize: 16),
-              ),
-              onTap: () {},
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
+              'Product of two matrices',
+              style: TextStyle(fontSize: 16),
             ),
-            const Divider(
-              thickness: 1,
+            onTap: () {},
+          ),
+          const Divider(
+            thickness: 1,
+          ),
+          ListTile(
+            title: const Text(
+              'Settings',
+              style: TextStyle(fontSize: 16),
             ),
-            ListTile(
-              title: Text(
-                'Settings',
-                style: TextStyle(fontSize: 16),
-              ),
-              leading: const Icon(Icons.settings),
-              onTap: () {},
-            ),
-          ],
-        ),
-      );
+            leading: const Icon(Icons.settings),
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
 }
