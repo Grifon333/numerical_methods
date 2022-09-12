@@ -208,6 +208,16 @@ class _PointsVectorValuesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pointA == null || pointB == null) return const SizedBox.shrink();
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
+    String nameFirstPoint, nameSecondPoint;
+    if (pointA == model?.firstPointA) {
+      nameFirstPoint = 'A';
+      nameSecondPoint = 'B';
+    } else {
+      nameFirstPoint = 'C';
+      nameSecondPoint = 'D';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -219,16 +229,16 @@ class _PointsVectorValuesWidget extends StatelessWidget {
         Row(
           children: [
             RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'A',
-                    style: TextStyle(
+                    text: nameFirstPoint,
+                    style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black,
                     ),
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: ' = {',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   )
@@ -251,16 +261,16 @@ class _PointsVectorValuesWidget extends StatelessWidget {
         Row(
           children: [
             RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'B',
-                    style: TextStyle(
+                    text: nameSecondPoint,
+                    style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black,
                     ),
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: ' = {',
                     style: TextStyle(color: Colors.black, fontSize: 18),
                   )
@@ -289,22 +299,23 @@ class _CoordinatesVectorValuesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
     if (vector == null) return const SizedBox.shrink();
 
     return Row(
       children: [
         RichText(
-          text: const TextSpan(
+          text: TextSpan(
             children: [
               TextSpan(
-                text: 'a',
-                style: TextStyle(
+                text: vector == model?.firstVector ? 'a' : 'b',
+                style: const TextStyle(
                   decoration: TextDecoration.overline,
                   fontSize: 18,
                   color: Colors.black,
                 ),
               ),
-              TextSpan(
+              const TextSpan(
                 text: ' = {',
                 style: TextStyle(color: Colors.black, fontSize: 18),
               )
@@ -378,6 +389,38 @@ class _ResultWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
     final result = model?.result;
+    final firstVectorText = model?.currentVectorFormFirst == 'points'
+        ? const TextSpan(
+      text: 'AB',
+      style: TextStyle(
+        fontSize: 18,
+        color: Colors.black,
+      ),
+    )
+        : const TextSpan(
+      text: 'a',
+      style: TextStyle(
+        decoration: TextDecoration.overline,
+        fontSize: 18,
+        color: Colors.black,
+      ),
+    );
+    final secondVectorText = model?.currentVectorFormSecond == 'points'
+        ? const TextSpan(
+      text: 'CD',
+      style: TextStyle(
+        fontSize: 18,
+        color: Colors.black,
+      ),
+    )
+        : const TextSpan(
+      text: 'b',
+      style: TextStyle(
+        decoration: TextDecoration.overline,
+        fontSize: 18,
+        color: Colors.black,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,10 +435,26 @@ class _ResultWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          '$result',
-          style: const TextStyle(
-            fontSize: 18,
+        RichText(
+          text: TextSpan(
+            children: [
+              firstVectorText,
+              const TextSpan(
+                text: ' * ',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              ),
+              secondVectorText,
+              TextSpan(
+                text: ' = $result',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              )
+            ],
           ),
         ),
       ],

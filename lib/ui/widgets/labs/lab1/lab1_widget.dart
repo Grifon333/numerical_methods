@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/lab1_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/matrix_transpose/matrix_transpose_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/matrix_transpose/matrix_transpose_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_and_scalar/prod_vec_scal_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_and_scalar/prod_vec_scal_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_model.dart';
@@ -49,6 +51,10 @@ class _Lab1WidgetState extends State<Lab1Widget> {
             child: const VectorModuleWidget(),
             create: () => VectorModuleModel(),
           ),
+          NotifierProvider(
+            child: const MatrixTransposeWidget(),
+            create: () => MatrixTransposeModel(),
+          )
         ],
       ),
     );
@@ -151,7 +157,10 @@ class _NavigationDrawer extends StatelessWidget {
               'Matrix transpose',
               style: TextStyle(fontSize: 16),
             ),
-            onTap: () {},
+            onTap: () {
+              model.setSelectedTab(4);
+              Navigator.of(context).pop();
+            },
           ),
           ListTile(
             title: const Text(

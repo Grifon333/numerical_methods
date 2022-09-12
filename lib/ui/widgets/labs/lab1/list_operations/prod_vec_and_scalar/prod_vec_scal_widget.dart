@@ -338,7 +338,8 @@ class _ScalarWidget extends StatelessWidget {
                       ? model?.setScalar(1)
                       : model?.setScalar(int.parse(value)),
                 },
-                keyboardType: const TextInputType.numberWithOptions(signed: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(signed: true),
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'^[-+]?\d*$')),
                 ],
@@ -380,10 +381,25 @@ class _ResultWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          '{$resultVector}',
-          style: const TextStyle(
-            fontSize: 18,
+        RichText(
+          text: TextSpan(
+            children: [
+              const TextSpan(
+                text: 'a',
+                style: TextStyle(
+                  decoration: TextDecoration.overline,
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              ),
+              TextSpan(
+                text: '*k = {$resultVector}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              )
+            ]
           ),
         ),
       ],
