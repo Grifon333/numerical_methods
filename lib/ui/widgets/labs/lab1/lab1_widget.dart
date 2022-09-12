@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/lab1_model.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/prod_vec_and_scalar/prod_vec_scal_model.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/prod_vec_and_scalar/prod_vec_scal_widget.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/sum_of_two_vectors/sum_of_two_vectors_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/lab1_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_and_scalar/prod_vec_scal_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_and_scalar/prod_vec_scal_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_widget.dart';
 
 class Lab1Widget extends StatefulWidget {
   const Lab1Widget({Key? key}) : super(key: key);
@@ -36,6 +38,10 @@ class _Lab1WidgetState extends State<Lab1Widget> {
           NotifierProvider(
             child: const SumOfTwoVectorsWidget(),
             create: () => SumOfTwoVectorsModel(),
+          ),
+          NotifierProvider(
+            child: const ScalarProductOfVectorWidget(),
+            create: () => ScalarProductOfVectorModel(),
           ),
         ],
       ),
@@ -119,7 +125,10 @@ class _NavigationDrawer extends StatelessWidget {
               'Scalar product of vectors',
               style: TextStyle(fontSize: 16),
             ),
-            onTap: () {},
+            onTap: () {
+              model.setSelectedTab(2);
+              Navigator.of(context).pop();
+            },
           ),
           ListTile(
             title: const Text(

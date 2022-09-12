@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/prod_vec_and_scalar/prod_vec_scal_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
 
-class ProdVecScalWidget extends StatelessWidget {
-  const ProdVecScalWidget({Key? key}) : super(key: key);
+class SumOfTwoVectorsWidget extends StatelessWidget {
+  const SumOfTwoVectorsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +19,43 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
+    if (model == null) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
-        children: const [
-          SizedBox(height: 20),
-          _VectorDimensionWidget(),
-          Divider(thickness: 2),
-          _VectorFormWidget(),
-          Divider(thickness: 2),
-          _VectorValues(),
-          Divider(thickness: 2),
-          _ScalarWidget(),
-          Divider(thickness: 2),
-          _ResultWidget(),
+        children: [
+          const SizedBox(height: 20),
+          const _VectorDimensionWidget(),
+          const Divider(thickness: 2),
+          _VectorFormWidget(
+            text: 'First vector representation form:   ',
+            currentValue: model.currentVectorFormFirst,
+            onChange: model.changeVectorFormFirst,
+          ),
+          _VectorFormWidget(
+            text: 'Second vector representation form:   ',
+            currentValue: model.currentVectorFormSecond,
+            onChange: model.changeVectorFormSecond,
+          ),
+          const Divider(thickness: 2),
+          _VectorValues(
+            text: 'First vector values:',
+            currentVectorForm: model.currentVectorFormFirst,
+            pointA: model.firstPointA,
+            pointB: model.firstPointB,
+            vector: model.firstVector,
+          ),
+          _VectorValues(
+            text: 'Second vector values:',
+            currentVectorForm: model.currentVectorFormSecond,
+            pointA: model.secondPointA,
+            pointB: model.secondPointB,
+            vector: model.secondVector,
+          ),
+          const Divider(thickness: 2),
+          const _ResultWidget(),
         ],
       ),
     );
@@ -44,7 +67,7 @@ class _VectorDimensionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
+    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
     if (model == null) return const SizedBox.shrink();
     final items = model.dimensions;
     int? currentValue = model.currentDimension;
@@ -76,35 +99,50 @@ class _VectorDimensionWidget extends StatelessWidget {
 }
 
 class _VectorFormWidget extends StatelessWidget {
-  const _VectorFormWidget({Key? key}) : super(key: key);
+  final String text;
+  final String? currentValue;
+  final Function(String? value) onChange;
+
+  const _VectorFormWidget({
+    Key? key,
+    required this.text,
+    required this.currentValue,
+    required this.onChange,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
+    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
     if (model == null) return const SizedBox.shrink();
     final items = model.vectorForms;
-    String? currentValue = model.currentVectorForm;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        const Text(
-          'Vector representation form:   ',
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        DropdownButton<String>(
-          value: currentValue,
-          items: items.map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (value) {
-            model.changeVectorForm(value);
-          },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            DropdownButton<String>(
+              value: currentValue,
+              items: items.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(
+                    value,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                onChange(value);
+              },
+            ),
+          ],
         ),
       ],
     );
@@ -112,29 +150,45 @@ class _VectorFormWidget extends StatelessWidget {
 }
 
 class _VectorValues extends StatelessWidget {
-  const _VectorValues({Key? key}) : super(key: key);
+  final String text;
+  final String currentVectorForm;
+  final List<int>? pointA;
+  final List<int>? pointB;
+  final List<int>? vector;
+
+  const _VectorValues({
+    Key? key,
+    required this.text,
+    required this.currentVectorForm,
+    this.pointA,
+    this.pointB,
+    this.vector,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
+        SizedBox(
           width: double.infinity,
           child: Text(
-            'Vector values:',
+            text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
             ),
           ),
         ),
         const SizedBox(height: 10),
-        model?.currentVectorForm == 'points'
-            ? const _PointsVectorValuesWidget()
-            : const _CoordinatesVectorValuesWidget(),
+        currentVectorForm == 'points' && pointA != null && pointB != null
+            ? _PointsVectorValuesWidget(
+                pointA: pointA,
+                pointB: pointB,
+              )
+            : _CoordinatesVectorValuesWidget(
+                vector: vector,
+              ),
         const SizedBox(height: 10),
       ],
     );
@@ -142,12 +196,18 @@ class _VectorValues extends StatelessWidget {
 }
 
 class _PointsVectorValuesWidget extends StatelessWidget {
-  const _PointsVectorValuesWidget({Key? key}) : super(key: key);
+  final List<int>? pointA;
+  final List<int>? pointB;
+
+  const _PointsVectorValuesWidget({
+    Key? key,
+    required this.pointA,
+    required this.pointB,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
-
+    if (pointA == null || pointB == null) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -175,7 +235,7 @@ class _PointsVectorValuesWidget extends StatelessWidget {
                 ],
               ),
             ),
-            _ListFieldWidget(array: model?.pointA),
+            _ListFieldWidget(array: pointA),
             const Text(
               '}',
               style: TextStyle(color: Colors.black, fontSize: 18),
@@ -207,7 +267,7 @@ class _PointsVectorValuesWidget extends StatelessWidget {
                 ],
               ),
             ),
-            _ListFieldWidget(array: model?.pointB),
+            _ListFieldWidget(array: pointB),
             const Text(
               '}',
               style: TextStyle(color: Colors.black, fontSize: 18),
@@ -220,11 +280,16 @@ class _PointsVectorValuesWidget extends StatelessWidget {
 }
 
 class _CoordinatesVectorValuesWidget extends StatelessWidget {
-  const _CoordinatesVectorValuesWidget({Key? key}) : super(key: key);
+  final List<int>? vector;
+
+  const _CoordinatesVectorValuesWidget({
+    Key? key,
+    required this.vector,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
+    if (vector == null) return const SizedBox.shrink();
 
     return Row(
       children: [
@@ -246,7 +311,7 @@ class _CoordinatesVectorValuesWidget extends StatelessWidget {
             ],
           ),
         ),
-        _ListFieldWidget(array: model?.vector),
+        _ListFieldWidget(array: vector),
         const Text(
           '}',
           style: TextStyle(color: Colors.black, fontSize: 18),
@@ -263,7 +328,7 @@ class _ListFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
+    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
     final count = model?.currentDimension ?? 2;
 
     return SizedBox(
@@ -306,65 +371,12 @@ class _ListFieldWidget extends StatelessWidget {
   }
 }
 
-class _ScalarWidget extends StatelessWidget {
-  const _ScalarWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
-
-    return Column(
-      children: [
-        const Text(
-          'Scalar:',
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        Row(
-          children: [
-            const Text(
-              'k = ',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(
-              width: 45,
-              height: 30,
-              child: TextField(
-                onChanged: (value) => {
-                  value.isEmpty || value == '-'
-                      ? model?.setScalar(1)
-                      : model?.setScalar(int.parse(value)),
-                },
-                keyboardType: const TextInputType.numberWithOptions(signed: true),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'^[-+]?\d*$')),
-                ],
-                style: const TextStyle(fontSize: 16),
-                textAlign: TextAlign.end,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 6),
-                  hintText: '1',
-                ),
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 10),
-      ],
-    );
-  }
-}
-
 class _ResultWidget extends StatelessWidget {
   const _ResultWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ProdVecScalModel>(context);
+    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
     final resultVector = model?.resultVector.join(', ');
 
     return Column(

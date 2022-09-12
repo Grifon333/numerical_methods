@@ -1,7 +1,7 @@
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
 import 'package:numerical_methods/ui/widgets/example.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/lab1_widget.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/lab1_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/lab1_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/lab1_model.dart';
 
 class mainNavigationNameRoute {
   static const main = '/';

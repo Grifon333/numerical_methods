@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
-import 'package:numerical_methods/ui/widgets/labs/laba1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_model.dart';
 
-class SumOfTwoVectorsWidget extends StatelessWidget {
-  const SumOfTwoVectorsWidget({Key? key}) : super(key: key);
+class ScalarProductOfVectorWidget extends StatelessWidget {
+  const ScalarProductOfVectorWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
     if (model == null) return const SizedBox.shrink();
 
     return Padding(
@@ -40,14 +40,14 @@ class _BodyWidget extends StatelessWidget {
             onChange: model.changeVectorFormSecond,
           ),
           const Divider(thickness: 2),
-          _VectorFirstValues(
+          _VectorValues(
             text: 'First vector values:',
             currentVectorForm: model.currentVectorFormFirst,
             pointA: model.firstPointA,
             pointB: model.firstPointB,
             vector: model.firstVector,
           ),
-          _VectorFirstValues(
+          _VectorValues(
             text: 'Second vector values:',
             currentVectorForm: model.currentVectorFormSecond,
             pointA: model.secondPointA,
@@ -67,7 +67,7 @@ class _VectorDimensionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
     if (model == null) return const SizedBox.shrink();
     final items = model.dimensions;
     int? currentValue = model.currentDimension;
@@ -112,7 +112,7 @@ class _VectorFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
     if (model == null) return const SizedBox.shrink();
     final items = model.vectorForms;
 
@@ -149,14 +149,14 @@ class _VectorFormWidget extends StatelessWidget {
   }
 }
 
-class _VectorFirstValues extends StatelessWidget {
+class _VectorValues extends StatelessWidget {
   final String text;
   final String currentVectorForm;
   final List<int>? pointA;
   final List<int>? pointB;
   final List<int>? vector;
 
-  const _VectorFirstValues({
+  const _VectorValues({
     Key? key,
     required this.text,
     required this.currentVectorForm,
@@ -183,12 +183,12 @@ class _VectorFirstValues extends StatelessWidget {
         const SizedBox(height: 10),
         currentVectorForm == 'points' && pointA != null && pointB != null
             ? _PointsVectorValuesWidget(
-                pointA: pointA,
-                pointB: pointB,
-              )
+          pointA: pointA,
+          pointB: pointB,
+        )
             : _CoordinatesVectorValuesWidget(
-                vector: vector,
-              ),
+          vector: vector,
+        ),
         const SizedBox(height: 10),
       ],
     );
@@ -328,7 +328,7 @@ class _ListFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
     final count = model?.currentDimension ?? 2;
 
     return SizedBox(
@@ -376,8 +376,8 @@ class _ResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<SumOfTwoVectorsModel>(context);
-    final resultVector = model?.resultVector.join(', ');
+    final model = NotifierProvider.watch<ScalarProductOfVectorModel>(context);
+    final result = model?.result;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,7 +393,7 @@ class _ResultWidget extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          '{$resultVector}',
+          '$result',
           style: const TextStyle(
             fontSize: 18,
           ),
