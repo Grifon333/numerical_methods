@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
-class ProdVecScalModel extends ChangeNotifier {
+class VectorModuleModel extends ChangeNotifier {
   final _dimensions = [2, 3, 4, 5, 6];
   final _vectorForms = ['points', 'coordinates'];
   int _currentDimension = 3;
@@ -9,8 +10,7 @@ class ProdVecScalModel extends ChangeNotifier {
   List<int> vector = [0, 0, 0, 0, 0, 0];
   List<int> pointA = [0, 0, 0, 0, 0, 0];
   List<int> pointB = [0, 0, 0, 0, 0, 0];
-  int? _scalar;
-  List<int> _resultVector = [];
+  double _result = 0;
 
   List<int> get dimensions => _dimensions;
 
@@ -20,13 +20,7 @@ class ProdVecScalModel extends ChangeNotifier {
 
   String? get currentVectorForm => _currentVectorForm;
 
-  List<int> get resultVector => _resultVector;
-
-  void setScalar(int value) {
-    if (_scalar == value) return;
-    _scalar = value;
-    notifyListeners();
-  }
+  double get result => _result;
 
   void changeDimension(int? value) {
     if (_currentDimension == value) return;
@@ -45,18 +39,25 @@ class ProdVecScalModel extends ChangeNotifier {
   }
 
   void resultCalculation() {
+    List<int> resultVector;
     if (_currentVectorForm == 'points') {
-      _resultVector = List<int>.filled(6, 0);
+      resultVector = List<int>.filled(6, 0);
       for (int i = 0; i < _currentDimension; i++) {
-        _resultVector[i] = (pointB[i] - pointA[i]) * (_scalar ?? 1);
+        resultVector[i] = pointB[i] - pointA[i];
       }
-      _resultVector = _resultVector.getRange(0, _currentDimension).toList();
+      resultVector = resultVector.getRange(0, _currentDimension).toList();
     } else {
-      _resultVector = vector
+      resultVector = vector
           .getRange(0, _currentDimension)
-          .map((int e) => e * (_scalar ?? 1))
           .toList();
     }
+
+    int t = 0;
+    for(int i = 0; i < _currentDimension; i++) {
+      t += resultVector[i] * resultVector[i];
+    }
+    _result = (sqrt(t) * 1000).roundToDouble() / 1000;
+
     notifyListeners();
   }
 }

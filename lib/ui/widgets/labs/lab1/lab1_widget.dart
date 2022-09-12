@@ -7,6 +7,8 @@ import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_pr
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/vector_module/vector_module_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/vector_module/vector_module_widget.dart';
 
 class Lab1Widget extends StatefulWidget {
   const Lab1Widget({Key? key}) : super(key: key);
@@ -42,6 +44,10 @@ class _Lab1WidgetState extends State<Lab1Widget> {
           NotifierProvider(
             child: const ScalarProductOfVectorWidget(),
             create: () => ScalarProductOfVectorModel(),
+          ),
+          NotifierProvider(
+            child: const VectorModuleWidget(),
+            create: () => VectorModuleModel(),
           ),
         ],
       ),
@@ -135,7 +141,10 @@ class _NavigationDrawer extends StatelessWidget {
               'Vector module',
               style: TextStyle(fontSize: 16),
             ),
-            onTap: () {},
+            onTap: () {
+              model.setSelectedTab(3);
+              Navigator.of(context).pop();
+            },
           ),
           ListTile(
             title: const Text(
