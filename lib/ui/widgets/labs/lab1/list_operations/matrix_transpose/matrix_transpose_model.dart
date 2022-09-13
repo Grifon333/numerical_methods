@@ -4,18 +4,13 @@ class MatrixTransposeModel extends ChangeNotifier {
   final _dimensions = [1, 2, 3, 4, 5, 6];
   int _height = 3;
   int _width = 3;
+  int? _scalar;
 
-  List<List<int>> matrix = [
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0]
-  ];
-
-  List<List<int>> _result = [];
-  String _resultString = '';
+  List<List<int>> matrix = List.generate(6, (_) => List.filled(6, 0));
+  List<List<int>> _resultTranspose = [];
+  List<List<int>> _resultProduct = [];
+  String _resultTransposeString = '';
+  String _resultProductString = '';
 
   int get height => _height;
 
@@ -23,9 +18,9 @@ class MatrixTransposeModel extends ChangeNotifier {
 
   List<int> get dimensions => _dimensions;
 
-  List<List<int>> get result => _result;
+  String get resultTransposeString => _resultTransposeString;
 
-  String get resultString => _resultString;
+  String get resultProductString => _resultProductString;
 
   void changeHeight(int? value) {
     if (_height == value) return;
@@ -47,18 +42,41 @@ class MatrixTransposeModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resultCalculation() {
-    _result = List.generate(_width, (_) => List.filled(_height, 0));
+  void transposeCalculation() {
+    _resultTranspose = List.generate(_width, (_) => List.filled(_height, 0));
     for (int i = 0; i < _height; i++) {
       for (int j = 0; j < _width; j++) {
-        _result[j][i] = matrix[i][j];
+        _resultTranspose[j][i] = matrix[i][j];
       }
     }
-    _resultString = '';
-    for(int i = 0; i < _result.length; i++) {
-      _resultString += _result[i].join("  ");
-      if (i < _result.length - 1) {
-        _resultString += '\n';
+    _resultTransposeString = '';
+    for(int i = 0; i < _resultTranspose.length; i++) {
+      _resultTransposeString += _resultTranspose[i].join("  ");
+      if (i < _resultTranspose.length - 1) {
+        _resultTransposeString += '\n';
+      }
+    }
+    notifyListeners();
+  }
+
+  void setScalar(int value) {
+    if (_scalar == value) return;
+    _scalar = value;
+    notifyListeners();
+  }
+
+  void productCalculation() {
+    _resultProduct = List.generate(_height, (_) => List.filled(_width, 0));
+    for (int i = 0; i < _height; i++) {
+      for (int j = 0; j < _width; j++) {
+        _resultProduct[i][j] = matrix[i][j] * (_scalar ?? 1);
+      }
+    }
+    _resultProductString = '';
+    for(int i = 0; i < _resultProduct.length; i++) {
+      _resultProductString += _resultProduct[i].join("  ");
+      if (i < _resultProduct.length - 1) {
+        _resultProductString += '\n';
       }
     }
     notifyListeners();

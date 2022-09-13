@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
-import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/matrix_transpose/matrix_transpose_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_and_product_matrices/sum_and_product_matrices_model.dart';
 
-class MatrixTransposeWidget extends StatelessWidget {
-  const MatrixTransposeWidget({Key? key}) : super(key: key);
+class SumAndProductsMatricesWidget extends StatelessWidget {
+  const SumAndProductsMatricesWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +24,18 @@ class _BodyWidget extends StatelessWidget {
       child: ListView(
         children: const [
           SizedBox(height: 20),
-          _SizeMatrixWidget(),
+          _SizeMatrixWidget(typeMatrix: 'First'),
+          _SizeMatrixWidget(typeMatrix: 'Second'),
           Divider(thickness: 2),
-          _MatrixValues(),
+          _MatrixValues(typeMatrix: 'first'),
+          _MatrixValues(typeMatrix: 'second'),
           Divider(thickness: 2),
-          _ResultTransposeWidget(),
+          _ResultSumWidget(),
           SizedBox(height: 10),
           Divider(thickness: 2),
-          _ScalarWidget(),
-          Divider(thickness: 2),
+          _ResultDifferenceWidget(),
           SizedBox(height: 10),
+          Divider(thickness: 2),
           _ResultProductWidget(),
         ],
       ),
@@ -42,19 +44,34 @@ class _BodyWidget extends StatelessWidget {
 }
 
 class _SizeMatrixWidget extends StatelessWidget {
-  const _SizeMatrixWidget({Key? key}) : super(key: key);
+  final String typeMatrix;
+
+  const _SizeMatrixWidget({
+    Key? key,
+    required this.typeMatrix,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MatrixTransposeModel>(context);
+    final model = NotifierProvider.watch<SumAndProductsMatricesModel>(context);
     if (model == null) return const SizedBox.shrink();
     final items = model.dimensions;
-    int? currentHeight = model.height;
-    int? currentWidth = model.width;
+    int? currentHeight =
+        typeMatrix == 'First' ? model.heightFirst : model.heightSecond;
+    int? currentWidth =
+        typeMatrix == 'First' ? model.widthFirst : model.widthSecond;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text(
+          typeMatrix,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(width: 20),
         const Text(
           'Height:   ',
           style: TextStyle(
@@ -70,7 +87,9 @@ class _SizeMatrixWidget extends StatelessWidget {
             );
           }).toList(),
           onChanged: (value) {
-            model.changeHeight(value);
+            typeMatrix == 'First'
+                ? model.changeHeightFirst(value)
+                : model.changeHeightSecond(value);
           },
         ),
         const SizedBox(width: 20),
@@ -89,7 +108,9 @@ class _SizeMatrixWidget extends StatelessWidget {
             );
           }).toList(),
           onChanged: (value) {
-            model.changeWidth(value);
+            typeMatrix == 'First'
+                ? model.changeWidthFirst(value)
+                : model.changeWidthSecond(value);
           },
         ),
       ],
@@ -98,27 +119,36 @@ class _SizeMatrixWidget extends StatelessWidget {
 }
 
 class _MatrixValues extends StatelessWidget {
-  const _MatrixValues({Key? key}) : super(key: key);
+  final String typeMatrix;
+
+  const _MatrixValues({
+    Key? key,
+    required this.typeMatrix,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MatrixTransposeModel>(context);
+    final model = NotifierProvider.watch<SumAndProductsMatricesModel>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
+        SizedBox(
           width: double.infinity,
           child: Text(
-            'Matrix values:',
+            'Matrix $typeMatrix values:',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
             ),
           ),
         ),
         const SizedBox(height: 10),
-        _ListFieldWidget(matrix: model?.matrix),
+        _ListFieldWidget(
+            typeMatrix: typeMatrix,
+            matrix: typeMatrix == 'first'
+                ? model?.matrixFirst
+                : model?.matrixSecond),
         const SizedBox(height: 10),
       ],
     );
@@ -126,15 +156,24 @@ class _MatrixValues extends StatelessWidget {
 }
 
 class _ListFieldWidget extends StatelessWidget {
+  final String typeMatrix;
   final List<List<int>>? matrix;
 
-  const _ListFieldWidget({Key? key, required this.matrix}) : super(key: key);
+  const _ListFieldWidget({
+    Key? key,
+    required this.typeMatrix,
+    required this.matrix,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MatrixTransposeModel>(context);
-    final width = model?.width ?? 3;
-    final height = model?.height ?? 3;
+    final model = NotifierProvider.watch<SumAndProductsMatricesModel>(context);
+    final width = typeMatrix == 'first'
+        ? (model?.widthFirst ?? 3)
+        : (model?.widthSecond ?? 3);
+    final height = typeMatrix == 'first'
+        ? (model?.heightFirst ?? 3)
+        : (model?.heightSecond ?? 3);
     if (matrix == null) return const SizedBox.shrink();
 
     return Row(
@@ -210,22 +249,29 @@ class _ListFieldWidget extends StatelessWidget {
   }
 }
 
-class _ResultTransposeWidget extends StatelessWidget {
-  const _ResultTransposeWidget({Key? key}) : super(key: key);
+class _ResultSumWidget extends StatelessWidget {
+  const _ResultSumWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MatrixTransposeModel>(context);
-    final result = model?.resultTransposeString ?? '';
-    final height = model?.width ?? 1;
+    final model = NotifierProvider.watch<SumAndProductsMatricesModel>(context);
+    final result = model?.resultSumString ?? '';
+    final height = model?.heightFirst ?? 1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ElevatedButton(
-          onPressed: () => model?.transposeCalculation(),
+          onPressed: () {
+            if (model?.heightFirst != model?.heightSecond ||
+                model?.widthFirst != model?.widthSecond) {
+              model?.setResultSumString = '';
+            } else {
+              model?.sumCalculate();
+            }
+          },
           child: const Text(
-            'Transpose',
+            'Sum',
             style: TextStyle(
               fontSize: 18,
             ),
@@ -234,28 +280,12 @@ class _ResultTransposeWidget extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'A',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  'T',
-                  style: TextStyle(
-                    fontSize: 10,
-                  ),
-                ),
-                Text(
-                  ' =   ',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
+            const Text(
+              'A + B = ',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
             ),
             ColoredBox(
               color: Colors.black,
@@ -286,55 +316,68 @@ class _ResultTransposeWidget extends StatelessWidget {
   }
 }
 
-class _ScalarWidget extends StatelessWidget {
-  const _ScalarWidget({Key? key}) : super(key: key);
+class _ResultDifferenceWidget extends StatelessWidget {
+  const _ResultDifferenceWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MatrixTransposeModel>(context);
+    final model = NotifierProvider.watch<SumAndProductsMatricesModel>(context);
+    final result = model?.resultDifferenceString ?? '';
+    final height = model?.heightFirst ?? 1;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Scalar:',
-          style: TextStyle(
-            fontSize: 16,
+        ElevatedButton(
+          onPressed: () {
+            if (model?.heightFirst != model?.heightSecond ||
+                model?.widthFirst != model?.widthSecond) {
+              model?.setResultDifferenceString = '';
+            } else {
+              model?.differenceCalculate();
+            }
+          },
+          child: const Text(
+            'Difference',
+            style: TextStyle(
+              fontSize: 18,
+            ),
           ),
         ),
+        const SizedBox(height: 10),
         Row(
           children: [
             const Text(
-              'k = ',
+              'A + B = ',
               style: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
+            ColoredBox(
+              color: Colors.black,
+              child: SizedBox(
+                width: 1,
+                height: 21.0 * height,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              result,
+              style: const TextStyle(
                 fontSize: 18,
               ),
             ),
-            SizedBox(
-              width: 45,
-              height: 30,
-              child: TextField(
-                onChanged: (value) => {
-                  value.isEmpty || value == '-'
-                      ? model?.setScalar(1)
-                      : model?.setScalar(int.parse(value)),
-                },
-                keyboardType:
-                const TextInputType.numberWithOptions(signed: true),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'^[-+]?\d*$')),
-                ],
-                style: const TextStyle(fontSize: 16),
-                textAlign: TextAlign.end,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 6),
-                  hintText: '1',
-                ),
+            const SizedBox(width: 10),
+            ColoredBox(
+              color: Colors.black,
+              child: SizedBox(
+                width: 1,
+                height: 21.0 * height,
               ),
-            )
+            ),
           ],
         ),
-        const SizedBox(height: 10),
       ],
     );
   }
@@ -345,17 +388,23 @@ class _ResultProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MatrixTransposeModel>(context);
+    final model = NotifierProvider.watch<SumAndProductsMatricesModel>(context);
     final result = model?.resultProductString ?? '';
-    final height = model?.height ?? 1;
+    final height = model?.heightFirst ?? 1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ElevatedButton(
-          onPressed: () => model?.productCalculation(),
+          onPressed: () {
+            if (model?.widthFirst != model?.heightSecond) {
+              model?.setResultProductString = '';
+            } else {
+              model?.productCalculate();
+            }
+          },
           child: const Text(
-            'Result',
+            'Product',
             style: TextStyle(
               fontSize: 18,
             ),
@@ -364,25 +413,11 @@ class _ResultProductWidget extends StatelessWidget {
         const SizedBox(height: 10),
         Row(
           children: [
-            RichText(
-              text: const TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'k',
-                      style: TextStyle(
-                        decoration: TextDecoration.overline,
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '*A = ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    )
-                  ]
+            const Text(
+              'A * B = ',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
               ),
             ),
             ColoredBox(

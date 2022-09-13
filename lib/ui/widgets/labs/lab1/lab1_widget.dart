@@ -7,6 +7,8 @@ import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_and_scalar/prod_vec_scal_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/scalar_product_of_vector/scalar_product_of_vector_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_and_product_matrices/sum_and_product_matrices_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_and_product_matrices/sum_and_product_matrices_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/sum_of_two_vectors/sum_of_two_vectors_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/vector_module/vector_module_model.dart';
@@ -54,7 +56,11 @@ class _Lab1WidgetState extends State<Lab1Widget> {
           NotifierProvider(
             child: const MatrixTransposeWidget(),
             create: () => MatrixTransposeModel(),
-          )
+          ),
+          NotifierProvider(
+            child: const SumAndProductsMatricesWidget(),
+            create: () => SumAndProductsMatricesModel(),
+          ),
         ],
       ),
     );
@@ -154,7 +160,7 @@ class _NavigationDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text(
-              'Matrix transpose',
+              'Matrix transpose & Product of a matrix and a scalar',
               style: TextStyle(fontSize: 16),
             ),
             onTap: () {
@@ -162,34 +168,37 @@ class _NavigationDrawer extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
+          // ListTile(
+          //   title: const Text(
+          //     'Product of a matrix and a scalar',
+          //     style: TextStyle(fontSize: 16),
+          //   ),
+          //   onTap: () {},
+          // ),
+          // ListTile(
+          //   title: const Text(
+          //     'Product of a matrix and a vector',
+          //     style: TextStyle(fontSize: 16),
+          //   ),
+          //   onTap: () {},
+          // ),
           ListTile(
             title: const Text(
-              'Product of a matrix and a scalar',
+              'Sum & product of two matrices',
               style: TextStyle(fontSize: 16),
             ),
-            onTap: () {},
+            onTap: () {
+              model.setSelectedTab(5);
+              Navigator.of(context).pop();
+            },
           ),
-          ListTile(
-            title: const Text(
-              'Product of a matrix and a vector',
-              style: TextStyle(fontSize: 16),
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            title: const Text(
-              'Sum of two matrices',
-              style: TextStyle(fontSize: 16),
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            title: const Text(
-              'Product of two matrices',
-              style: TextStyle(fontSize: 16),
-            ),
-            onTap: () {},
-          ),
+          // ListTile(
+          //   title: const Text(
+          //     'Product of two matrices',
+          //     style: TextStyle(fontSize: 16),
+          //   ),
+          //   onTap: () {},
+          // ),
           const Divider(
             thickness: 1,
           ),
