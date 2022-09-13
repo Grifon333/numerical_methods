@@ -23,7 +23,7 @@ class _BodyWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
         children: const [
-          SizedBox(height: 20),
+          _TitleWidget(),
           _SizeMatrixWidget(),
           Divider(thickness: 2),
           _MatrixValues(),
@@ -36,6 +36,25 @@ class _BodyWidget extends StatelessWidget {
           SizedBox(height: 10),
           _ResultProductWidget(),
         ],
+      ),
+    );
+  }
+}
+
+class _TitleWidget extends StatelessWidget {
+  const _TitleWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        'Matrix transpose & Product of a matrix and a scalar',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -319,7 +338,7 @@ class _ScalarWidget extends StatelessWidget {
                       : model?.setScalar(int.parse(value)),
                 },
                 keyboardType:
-                const TextInputType.numberWithOptions(signed: true),
+                    const TextInputType.numberWithOptions(signed: true),
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'^[-+]?\d*$')),
                 ],
@@ -365,25 +384,23 @@ class _ResultProductWidget extends StatelessWidget {
         Row(
           children: [
             RichText(
-              text: const TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'k',
-                      style: TextStyle(
-                        decoration: TextDecoration.overline,
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '*A = ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    )
-                  ]
-              ),
+              text: const TextSpan(children: [
+                TextSpan(
+                  text: 'k',
+                  style: TextStyle(
+                    decoration: TextDecoration.overline,
+                    fontSize: 18,
+                    color: Colors.black,
+                  ),
+                ),
+                TextSpan(
+                  text: '*A = ',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                  ),
+                )
+              ]),
             ),
             ColoredBox(
               color: Colors.black,
@@ -413,4 +430,3 @@ class _ResultProductWidget extends StatelessWidget {
     );
   }
 }
-

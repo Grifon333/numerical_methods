@@ -23,7 +23,7 @@ class _BodyWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
         children: const [
-          SizedBox(height: 20),
+          _TitleWidget(),
           _SizeMatrixWidget(typeMatrix: 'First'),
           _SizeMatrixWidget(typeMatrix: 'Second'),
           Divider(thickness: 2),
@@ -38,6 +38,25 @@ class _BodyWidget extends StatelessWidget {
           Divider(thickness: 2),
           _ResultProductWidget(),
         ],
+      ),
+    );
+  }
+}
+
+class _TitleWidget extends StatelessWidget {
+  const _TitleWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        'Sum & product of two matrices',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -266,6 +285,13 @@ class _ResultSumWidget extends StatelessWidget {
             if (model?.heightFirst != model?.heightSecond ||
                 model?.widthFirst != model?.widthSecond) {
               model?.setResultSumString = '';
+              showDialog(
+                context: context,
+                builder: (context) => const _AlertDialogWidget(
+                  textError:
+                  'Matrix sizes are not equal',
+                ),
+              );
             } else {
               model?.sumCalculate();
             }
@@ -333,6 +359,13 @@ class _ResultDifferenceWidget extends StatelessWidget {
             if (model?.heightFirst != model?.heightSecond ||
                 model?.widthFirst != model?.widthSecond) {
               model?.setResultDifferenceString = '';
+              showDialog(
+                context: context,
+                builder: (context) => const _AlertDialogWidget(
+                  textError:
+                  'Matrix sizes are not equal',
+                ),
+              );
             } else {
               model?.differenceCalculate();
             }
@@ -399,6 +432,14 @@ class _ResultProductWidget extends StatelessWidget {
           onPressed: () {
             if (model?.widthFirst != model?.heightSecond) {
               model?.setResultProductString = '';
+              showDialog(
+                context: context,
+                builder: (context) => const _AlertDialogWidget(
+                  textError:
+                      'The number of columns of the first matrix does not '
+                      'equal the number of rows of the second matrix',
+                ),
+              );
             } else {
               model?.productCalculate();
             }
@@ -449,3 +490,25 @@ class _ResultProductWidget extends StatelessWidget {
   }
 }
 
+class _AlertDialogWidget extends StatelessWidget {
+  final String textError;
+
+  const _AlertDialogWidget({
+    Key? key,
+    required this.textError,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Error'),
+      content: Text(textError),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}

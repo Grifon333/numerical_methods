@@ -204,6 +204,14 @@ class _NavigationDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text(
+              'Tutorial',
+              style: TextStyle(fontSize: 16),
+            ),
+            leading: const Icon(Icons.my_library_books),
+            onTap: () {},
+          ),
+          ListTile(
+            title: const Text(
               'Settings',
               style: TextStyle(fontSize: 16),
             ),

@@ -26,7 +26,7 @@ class _BodyWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
         children: [
-          const SizedBox(height: 20),
+          const _TitleWidget(),
           const _VectorDimensionWidget(),
           const Divider(thickness: 2),
           _VectorFormWidget(
@@ -57,6 +57,25 @@ class _BodyWidget extends StatelessWidget {
           const Divider(thickness: 2),
           const _ResultWidget(),
         ],
+      ),
+    );
+  }
+}
+
+class _TitleWidget extends StatelessWidget {
+  const _TitleWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        'Scalar product of vectors',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
