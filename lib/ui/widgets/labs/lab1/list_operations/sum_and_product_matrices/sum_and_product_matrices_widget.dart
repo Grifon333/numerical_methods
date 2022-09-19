@@ -381,7 +381,7 @@ class _ResultDifferenceWidget extends StatelessWidget {
         Row(
           children: [
             const Text(
-              'A + B = ',
+              'A - B = ',
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.black,

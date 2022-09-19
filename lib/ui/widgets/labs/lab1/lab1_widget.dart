@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
-import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/lab1_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab1/lab1_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/matrix_transpose/matrix_transpose_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/matrix_transpose/matrix_transpose_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/list_operations/prod_vec_and_scalar/prod_vec_scal_model.dart';
