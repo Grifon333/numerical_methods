@@ -67,6 +67,7 @@ class _EnterRangeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab2Model>(context);
     if (model == null) return const SizedBox.shrink();
+    final focusNodeB = FocusNode();
 
     return Row(
       children: [
@@ -80,11 +81,13 @@ class _EnterRangeWidget extends StatelessWidget {
           width: 70,
           height: 30,
           child: TextField(
+            autofocus: true,
             controller: TextEditingController(text: '${model.a}'),
             onSubmitted: (value) => {
               value.isEmpty || value == '-'
                   ? model.setA(0.1)
-                  : model.setA(double.parse(value))
+                  : model.setA(double.parse(value)),
+              focusNodeB.requestFocus(),
             },
             keyboardType: const TextInputType.numberWithOptions(
               signed: true,
@@ -113,10 +116,11 @@ class _EnterRangeWidget extends StatelessWidget {
           width: 70,
           height: 30,
           child: TextField(
+            focusNode: focusNodeB,
             controller: TextEditingController(text: '${model.b}'),
             onSubmitted: (value) => {
               value.isEmpty || value == '-'
-                  ? model.setB(0.1)
+                  ? model.setB(0.9)
                   : model.setB(double.parse(value))
             },
             keyboardType: const TextInputType.numberWithOptions(
@@ -136,92 +140,6 @@ class _EnterRangeWidget extends StatelessWidget {
           ),
         )
       ],
-    );
-  }
-}
-
-class _MethodHalfDivide extends StatelessWidget {
-  const _MethodHalfDivide({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<Lab2Model>(context);
-    if (model == null) return const SizedBox.shrink();
-
-    return ElevatedButton(
-      onPressed: () => model.calculateByHalfDivide(),
-      child: const Text(
-        'Calculate by method Half Divider',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _MethodIteration extends StatelessWidget {
-  const _MethodIteration({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<Lab2Model>(context);
-    if (model == null) return const SizedBox.shrink();
-
-    return ElevatedButton(
-      onPressed: () => model.calculateByIteration(),
-      child: const Text(
-        'Calculate by method Iteration',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _MethodChords extends StatelessWidget {
-  const _MethodChords({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<Lab2Model>(context);
-    if (model == null) return const SizedBox.shrink();
-
-    return ElevatedButton(
-      onPressed: () => model.calculateByChords(),
-      child: const Text(
-        'Calculate by method Chords',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _MethodNewton extends StatelessWidget {
-  const _MethodNewton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<Lab2Model>(context);
-    if (model == null) return const SizedBox.shrink();
-
-    return SizedBox(
-      child: ElevatedButton(
-        onPressed: () => model.calculateByNewton(),
-        child: const Text(
-          'Calculate by method Newton',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
     );
   }
 }
@@ -269,11 +187,11 @@ class _ShowCurrentMethodWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab2Model>(context);
     if (model == null) return const SizedBox.shrink();
-    const methodWidgets = [
-      _MethodHalfDivide(),
-      _MethodIteration(),
-      _MethodChords(),
-      _MethodNewton()
+    final listMethods = [
+      model.calculateByHalfDivide,
+      model.calculateByIteration,
+      model.calculateByChords,
+      model.calculateByNewton,
     ];
 
     return Column(
@@ -282,7 +200,41 @@ class _ShowCurrentMethodWidget extends StatelessWidget {
         const SizedBox(height: 10),
         SizedBox(
           width: double.infinity,
-          child: methodWidgets[model.currentMethodNumber()],
+          child: ElevatedButton(
+            onPressed: () {
+              try {
+                model.check();
+                listMethods[model.currentMethodNumber()].call();
+              } on ExceptionRange catch (e) {
+                String msg;
+                switch (e.type) {
+                  case ExceptionRangeType.pointIsNotInZone:
+                    msg = 'f(a) * f(b) > 0 \n'
+                        'The root isolation interval is set incorrectly';
+                    break;
+                  case ExceptionRangeType.exceedingTheBoundaries:
+                    msg = 'x є (0, ∞)';
+                    break;
+                  case ExceptionRangeType.bLessA:
+                    msg = 'b < a \n'
+                        'Points of the root isolation interval are given in the wrong order';
+                }
+                showDialog(
+                  context: context,
+                  builder: (context) => _AlertDialogWidget(
+                    textError: msg,
+                  ),
+                );
+              }
+            },
+            child: Text(
+              'Calculate by method ${model.methods[model.currentMethodNumber()]}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 10),
         Text(
@@ -348,6 +300,29 @@ class _ShowStepsWidget extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AlertDialogWidget extends StatelessWidget {
+  final String textError;
+
+  const _AlertDialogWidget({
+    Key? key,
+    required this.textError,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Error'),
+      content: Text(textError),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('OK'),
         ),
       ],
     );

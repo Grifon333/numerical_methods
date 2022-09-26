@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+enum ExceptionRangeType { exceedingTheBoundaries, pointIsNotInZone, bLessA}
+
+class ExceptionRange implements Exception {
+  final ExceptionRangeType type;
+
+  ExceptionRange(this.type);
+}
+
 class Lab2Model extends ChangeNotifier {
   final double _start = -3;
   final double _end = 6;
@@ -183,6 +191,18 @@ class Lab2Model extends ChangeNotifier {
     _resultBySteps = _steps.join('\n');
     _resultFunctionBySteps = _stepsFunctions.join('\n');
     notifyListeners();
+  }
+
+  void check() {
+    if (_a <= 0 || _b <= 0) {
+      throw ExceptionRange(ExceptionRangeType.exceedingTheBoundaries);
+    }
+    if (formula(_a) * formula(_b) > 0) {
+      throw ExceptionRange(ExceptionRangeType.pointIsNotInZone);
+    }
+    if (_a > _b) {
+      throw ExceptionRange(ExceptionRangeType.bLessA);
+    }
   }
 }
 
