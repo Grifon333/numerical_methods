@@ -52,7 +52,7 @@ class _ListButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const count = 2;
+    const count = 3;
     const all = 8;
 
     return SizedBox(
