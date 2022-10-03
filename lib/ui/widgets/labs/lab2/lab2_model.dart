@@ -86,8 +86,9 @@ class Lab2Model extends ChangeNotifier {
           '\nf(a) = ${round(formula(left))}\nf(b) = ${round(formula(right))}');
     }
 
+    final x = (left + right ) / 2;
     _result =
-        'a = ${round(left)} \nb = ${round(right)} \nf(a) = ${formula(left)} \nf(b) = ${formula(right)}';
+        'x = ${round(x)} \nf(x) = ${formula(x)}';
     _updateData(time);
   }
 

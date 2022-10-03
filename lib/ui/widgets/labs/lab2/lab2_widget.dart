@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
+import 'package:numerical_methods/elements/text_field_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab2/graph_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab2/lab2_model.dart';
 
@@ -77,33 +78,17 @@ class _EnterRangeWidget extends StatelessWidget {
             fontSize: 16,
           ),
         ),
-        SizedBox(
+        TextFieldWidget(
           width: 70,
-          height: 30,
-          child: TextField(
-            autofocus: true,
-            controller: TextEditingController(text: '${model.a}'),
-            onSubmitted: (value) => {
-              value.isEmpty || value == '-'
-                  ? model.setA(0.1)
-                  : model.setA(double.parse(value)),
-              focusNodeB.requestFocus(),
-            },
-            keyboardType: const TextInputType.numberWithOptions(
-              signed: true,
-              decimal: true,
-            ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'^[-]?\d*\.?\d*')),
-            ],
-            style: const TextStyle(fontSize: 16),
-            textAlign: TextAlign.end,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(horizontal: 6),
-              hintText: '0',
-            ),
-          ),
+          autoFocus: true,
+          controller: TextEditingController(text: '${model.a}'),
+          onSubmited: (value) => {
+            value.isEmpty || value == '-'
+                ? model.setA(0.1)
+                : model.setA(double.parse(value)),
+            focusNodeB.requestFocus(),
+          },
+          hintText: '0',
         ),
         const SizedBox(width: 30),
         const Text(
@@ -112,33 +97,17 @@ class _EnterRangeWidget extends StatelessWidget {
             fontSize: 16,
           ),
         ),
-        SizedBox(
+        TextFieldWidget(
           width: 70,
-          height: 30,
-          child: TextField(
-            focusNode: focusNodeB,
-            controller: TextEditingController(text: '${model.b}'),
-            onSubmitted: (value) => {
-              value.isEmpty || value == '-'
-                  ? model.setB(0.9)
-                  : model.setB(double.parse(value))
-            },
-            keyboardType: const TextInputType.numberWithOptions(
-              signed: true,
-              decimal: true,
-            ),
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'^[-]?\d*\.?\d*')),
-            ],
-            style: const TextStyle(fontSize: 16),
-            textAlign: TextAlign.end,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(horizontal: 6),
-              hintText: '0',
-            ),
-          ),
-        )
+          focusNode: focusNodeB,
+          controller: TextEditingController(text: '${model.b}'),
+          onSubmited: (value) => {
+            value.isEmpty || value == '-'
+                ? model.setB(0.9)
+                : model.setB(double.parse(value))
+          },
+          hintText: '0',
+        ),
       ],
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
+import 'package:numerical_methods/elements/text_field_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab3/lab3_model.dart';
 
 class Lab3Widget extends StatelessWidget {
@@ -41,20 +41,29 @@ class _SystemOfEquationsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
-        _RowMatrixWidget(
-          row: 0,
-        ),
-        SizedBox(height: 5),
-        _RowMatrixWidget(
-          row: 1,
-        ),
-        SizedBox(height: 5),
-        _RowMatrixWidget(
-          row: 2,
-        ),
-      ],
+    return SizedBox(
+      width: 400,
+      height: 110,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          Column(
+            children: const [
+              _RowMatrixWidget(
+                row: 0,
+              ),
+              SizedBox(height: 5),
+              _RowMatrixWidget(
+                row: 1,
+              ),
+              SizedBox(height: 5),
+              _RowMatrixWidget(
+                row: 2,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -73,7 +82,7 @@ class _RowMatrixWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _TextFieldWidget(
+        _FillWidget(
           row: row,
           column: 0,
         ),
@@ -85,7 +94,7 @@ class _RowMatrixWidget extends StatelessWidget {
           ' + ',
           style: TextStyle(fontSize: 18),
         ),
-        _TextFieldWidget(
+        _FillWidget(
           row: row,
           column: 1,
         ),
@@ -97,7 +106,7 @@ class _RowMatrixWidget extends StatelessWidget {
           ' + ',
           style: TextStyle(fontSize: 18),
         ),
-        _TextFieldWidget(
+        _FillWidget(
           row: row,
           column: 2,
         ),
@@ -109,7 +118,7 @@ class _RowMatrixWidget extends StatelessWidget {
           ' = ',
           style: TextStyle(fontSize: 18),
         ),
-        _TextFieldWidget(
+        _FillWidget(
           row: row,
           column: 3,
         ),
@@ -118,11 +127,11 @@ class _RowMatrixWidget extends StatelessWidget {
   }
 }
 
-class _TextFieldWidget extends StatelessWidget {
+class _FillWidget extends StatelessWidget {
   final int row;
   final int column;
 
-  const _TextFieldWidget({
+  const _FillWidget({
     Key? key,
     required this.row,
     required this.column,
@@ -132,35 +141,16 @@ class _TextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab3Model>(context);
 
-    return SizedBox(
+    return TextFieldWidget(
       width: 60,
-      height: 30,
-      child: TextField(
-        onChanged: (value) => {
-          value.isEmpty || value == '-'
-              ? model?.writingValueToMatrix(
-                  0,
-                  row,
-                  column,
-                )
-              : model?.writingValueToMatrix(
-                  double.parse(value),
-                  row,
-                  column,
-                ),
-        },
-        keyboardType: const TextInputType.numberWithOptions(signed: true),
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.allow(RegExp(r'^[-]?\d*\.?\d*')),
-        ],
-        style: const TextStyle(fontSize: 16),
-        textAlign: TextAlign.end,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(horizontal: 6),
-          hintText: '0',
+      onChanged: (value) => {
+        model?.writingValueToMatrix(
+          value.isEmpty || value == '-' ? 0 : double.parse(value),
+          row,
+          column,
         ),
-      ),
+      },
+      hintText: '0',
     );
   }
 }
@@ -206,7 +196,7 @@ class _CalculateByGaussWidget extends StatelessWidget {
     final model = NotifierProvider.watch<Lab3Model>(context);
 
     return ElevatedButton(
-      onPressed: () => model?.calculateByGauss(),
+      onPressed: () =>model?.calculateByGauss(),
       child: const Text('Calculate by Gauss'),
     );
   }
