@@ -27,7 +27,8 @@ class Lab3Widget extends StatelessWidget {
                 height: 40,
               ),
               _CalculateByGaussWidget(),
-              _ShowWidget(),
+              _CalculateByLUWidget(),
+              _CalculateBySquareRootWidget(),
             ],
           ),
         ),
@@ -196,22 +197,36 @@ class _CalculateByGaussWidget extends StatelessWidget {
     final model = NotifierProvider.watch<Lab3Model>(context);
 
     return ElevatedButton(
-      onPressed: () =>model?.calculateByGauss(),
+      onPressed: () => model?.calculateByGauss(),
       child: const Text('Calculate by Gauss'),
     );
   }
 }
 
-class _ShowWidget extends StatelessWidget {
-  const _ShowWidget({Key? key}) : super(key: key);
+class _CalculateByLUWidget extends StatelessWidget {
+  const _CalculateByLUWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab3Model>(context);
 
     return ElevatedButton(
-      onPressed: () => model?.show(),
-      child: const Text('Show'),
+      onPressed: () => model?.calculateByLU(),
+      child: const Text('Calculate by LU'),
+    );
+  }
+}
+
+class _CalculateBySquareRootWidget extends StatelessWidget {
+  const _CalculateBySquareRootWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab3Model>(context);
+
+    return ElevatedButton(
+      onPressed: () => model?.calculateBySquareRoot(),
+      child: const Text('Calculate by Square root'),
     );
   }
 }
