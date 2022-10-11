@@ -6,6 +6,8 @@ class Lab3Model extends ChangeNotifier {
   final matrixCoefficient = List.generate(3, (_) => List.filled(3, 0.0));
   final matrixY = List.filled(3, 0.0);
   final matrixX = List.filled(3, 0.0);
+  bool isShow = false;
+  List interimResult = [];
 
   void writingValueToMatrix(double value, int row, int column) {
     if (column == 3) {
@@ -75,10 +77,13 @@ class Lab3Model extends ChangeNotifier {
           sum += a[i][j] * matrixX[j];
         }
 
-        matrixX[i] = (b[i] - sum) / a[i][i];
-        print('x[$i] = ${matrixX[i]}');
+        matrixX[i] = round((b[i] - sum) / a[i][i]);
       }
     }
+
+    interimResult.clear();
+    isShow = true;
+    notifyListeners();
   }
 
   void calculateByLU() {
@@ -109,7 +114,7 @@ class Lab3Model extends ChangeNotifier {
           for (int j = 0; j < i; j++) {
             sum += l[i][j] * u[j][k];
           }
-          u[i][k] = (a[i][k] - sum) / l[i][i];
+          u[i][k] = round((a[i][k] - sum) / l[i][i]);
         }
         u[k][k] = 1;
       }
@@ -124,8 +129,8 @@ class Lab3Model extends ChangeNotifier {
       y[i] = round((b[i] - sum) / l[i][i]);
     }
 
-    matrixX[n - 1] = y[n - 1];
-    for (int i = 0; i < n-1; i++) {
+    matrixX[n - 1] = round(y[n - 1]);
+    for (int i = n - 2; i >= 0; i--) {
       double sum = 0;
       for (int k = i + 1; k < n; k++) {
         sum += u[i][k] * matrixX[k];
@@ -133,16 +138,38 @@ class Lab3Model extends ChangeNotifier {
       matrixX[i] = round(y[i] - sum);
     }
 
-    print('${matrixX}');
+    interimResult.clear();
+    StringBuffer sb = StringBuffer();
+    for (int i = 0; i < l.length; i++) {
+      sb.write(l[i].join('\t\t\t'));
+      if (i == l.length - 1) {
+        continue;
+      }
+      sb.write('\n');
+    }
+    String lStr = sb.toString();
+    interimResult.add(['L', lStr]);
+
+    sb = StringBuffer();
+    for (int i = 0; i < u.length; i++) {
+      sb.write(u[i].join('\t\t\t'));
+      if (i == u.length - 1) {
+        continue;
+      }
+      sb.write('\n');
+    }
+    String uStr = sb.toString();
+    interimResult.add(['U', uStr]);
+
+    isShow = true;
+    notifyListeners();
   }
 
   void calculateBySquareRoot() {
     final a = List.generate(3, (_) => List.filled(3, 0.0));
     final b = List.filled(3, 0.0);
     final t = List.generate(3, (_) => List.filled(3, 0.0));
-    // final tTrans = List.generate(3, (_) => List.filled(3, 0.0));
     final y = List.filled(3, 0.0);
-    final x = List.filled(3, 0.0);
 
     int n = a.length;
     for (int i = 0; i < n; i++) {
@@ -153,21 +180,21 @@ class Lab3Model extends ChangeNotifier {
     }
 
     t[0][0] = sqrt(a[0][0]);
-    for(int j = 1; j < n; j++) {
+    for (int j = 1; j < n; j++) {
       t[0][j] = a[0][j] / t[0][0];
     }
 
-    for(int i = 1; i < n; i++) {
+    for (int i = 1; i < n; i++) {
       double sum = 0;
-      for(int k = 0; k < i; k++) {
+      for (int k = 0; k < i; k++) {
         sum += t[k][i] * t[k][i];
       }
       t[i][i] = sqrt(module(a[i][i] - sum));
 
-      for(int j = 0; j < n; j++) {
+      for (int j = 0; j < n; j++) {
         if (i < j) {
           double sum = 0;
-          for(int k = 0; k < i; k++) {
+          for (int k = 0; k < i; k++) {
             sum += t[k][i] * t[k][j];
           }
           t[i][j] = (a[i][j] - sum) / t[i][i];
@@ -177,31 +204,38 @@ class Lab3Model extends ChangeNotifier {
       }
     }
 
-    // for(int i = 0; i < n; i++) {
-    //   for(int j = 0; j < n; j++) {
-    //     tTrans[i][j] = t[j][i];
-    //   }
-    // }
-
     y[0] = b[0] / t[0][0];
-    for(int i = 1; i < n; i++) {
+    for (int i = 1; i < n; i++) {
       double sum = 0;
-      for(int k = 0; k < i; k++) {
+      for (int k = 0; k < i; k++) {
         sum += t[k][i] * y[k];
       }
       y[i] = (b[i] - sum) / t[i][i];
     }
 
-    x[n-1] = y[n-1] / t[n-1][n-1];
-    for(int i = n - 2; i >= 0; i--) {
+    matrixX[n - 1] = round(y[n - 1] / t[n - 1][n - 1]);
+    for (int i = n - 2; i >= 0; i--) {
       double sum = 0;
-      for(int k = n-1; k > i; k--) {
-        sum += t[i][k] * x[k];
+      for (int k = n - 1; k > i; k--) {
+        sum += t[i][k] * matrixX[k];
       }
-      x[i] = (y[i] - sum) / t[i][i];
+      matrixX[i] = round((y[i] - sum) / t[i][i]);
     }
 
-    print(x);
+    interimResult.clear();
+    StringBuffer sb = StringBuffer();
+    for (int i = 0; i < t.length; i++) {
+      sb.write(t[i].join('\t\t\t'));
+      if (i == t.length - 1) {
+        continue;
+      }
+      sb.write('\n');
+    }
+    String tStr = sb.toString();
+    interimResult.add(['T', tStr]);
+
+    isShow = true;
+    notifyListeners();
   }
 
   double module(double value) {
@@ -212,7 +246,26 @@ class Lab3Model extends ChangeNotifier {
   }
 
   double round(double number) {
-    // return (number * 1000000000).roundToDouble() / 1000000000;
-    return number;
+    return (number * 100).roundToDouble() / 100;
+  }
+
+  String getMatrixCoefficient() {
+    StringBuffer sb = StringBuffer();
+    for (int i = 0; i < matrixCoefficient.length; i++) {
+      sb.write(matrixCoefficient[i].join('\t\t\t'));
+      if (i == matrixCoefficient.length - 1) {
+        continue;
+      }
+      sb.write('\n');
+    }
+    return sb.toString();
+  }
+
+  String getMatrixB() {
+    return matrixY.join('\n');
+  }
+
+  String getMatrixX() {
+    return matrixX.join('\n');
   }
 }

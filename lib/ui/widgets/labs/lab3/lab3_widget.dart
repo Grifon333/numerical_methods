@@ -8,7 +8,8 @@ class Lab3Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final model = NotifierProvider.watch<Lab3Model>(context);
+    final model = NotifierProvider.watch<Lab3Model>(context);
+    if (model == null) return const SizedBox.shrink();
 
     return Scaffold(
       appBar: AppBar(
@@ -20,19 +21,83 @@ class Lab3Widget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            children: const [
-              _SystemOfEquationsWidget(),
-              Divider(
+            children: [
+              const _SystemOfEquationsWidget(),
+              const Divider(
                 thickness: 2,
                 height: 40,
               ),
-              _CalculateByGaussWidget(),
-              _CalculateByLUWidget(),
-              _CalculateBySquareRootWidget(),
+              const _SelectMethodWidget(),
+              const SizedBox(height: 20),
+              model.isShow == true
+                  ? const _ShowResultWidget()
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SelectMethodWidget extends StatelessWidget {
+  const _SelectMethodWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab3Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Select method:',
+          style: TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _ButtonForSelectMethodWidget(
+              onPressed: () => model.calculateByGauss(),
+              title: 'Gauses',
+            ),
+            _ButtonForSelectMethodWidget(
+              onPressed: () => model.calculateByLU(),
+              title: 'LU',
+            ),
+            _ButtonForSelectMethodWidget(
+              onPressed: () => model.calculateBySquareRoot(),
+              title: 'Square root',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ButtonForSelectMethodWidget extends StatelessWidget {
+  final void Function() onPressed;
+  final String title;
+
+  const _ButtonForSelectMethodWidget({
+    Key? key,
+    required this.onPressed,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ButtonStyle(
+        minimumSize: MaterialStateProperty.all(const Size(100, 36)),
+      ),
+      child: Text(title),
     );
   }
 }
@@ -189,44 +254,97 @@ class _VariableWithIndexWidget extends StatelessWidget {
   }
 }
 
-class _CalculateByGaussWidget extends StatelessWidget {
-  const _CalculateByGaussWidget({Key? key}) : super(key: key);
+class _ShowResultWidget extends StatelessWidget {
+  const _ShowResultWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab3Model>(context);
+    if (model == null) return const SizedBox.shrink();
+    List<Widget> interimResult = [];
+    for (int i = 0; i < model.interimResult.length; i++) {
+      interimResult.add(_ShowMatrixWidget(
+        title: '${model.interimResult[i][0]}',
+        content: '${model.interimResult[i][1]}',
+      ));
+    }
 
-    return ElevatedButton(
-      onPressed: () => model?.calculateByGauss(),
-      child: const Text('Calculate by Gauss'),
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _ShowMatrixWidget(
+              title: 'A',
+              content: model.getMatrixCoefficient(),
+            ),
+            const SizedBox(width: 50),
+            _ShowMatrixWidget(
+              title: 'B',
+              content: model.getMatrixB(),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        interimResult.isNotEmpty ?
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Row(
+            children: interimResult,
+          ),
+        ) : const SizedBox.shrink(),
+        _ShowMatrixWidget(
+          title: 'X',
+          content: model.getMatrixX(),
+        ),
+      ],
     );
   }
 }
 
-class _CalculateByLUWidget extends StatelessWidget {
-  const _CalculateByLUWidget({Key? key}) : super(key: key);
+class _ShowMatrixWidget extends StatelessWidget {
+  final String title;
+  final String content;
+
+  const _ShowMatrixWidget({
+    Key? key,
+    required this.title,
+    required this.content,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<Lab3Model>(context);
-
-    return ElevatedButton(
-      onPressed: () => model?.calculateByLU(),
-      child: const Text('Calculate by LU'),
-    );
-  }
-}
-
-class _CalculateBySquareRootWidget extends StatelessWidget {
-  const _CalculateBySquareRootWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<Lab3Model>(context);
-
-    return ElevatedButton(
-      onPressed: () => model?.calculateBySquareRoot(),
-      child: const Text('Calculate by Square root'),
+    return Row(
+      children: [
+        Text(
+          '$title = ',
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            color: Colors.black,
+            width: 1,
+            height: 60,
+          ),
+        ),
+        Text(
+          content,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            color: Colors.black,
+            width: 1,
+            height: 60,
+          ),
+        )
+      ],
     );
   }
 }
