@@ -20,7 +20,7 @@ class Lab3Widget extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
+          child: ListView(
             children: [
               const _SystemOfEquationsWidget(),
               const Divider(
@@ -267,6 +267,7 @@ class _ShowResultWidget extends StatelessWidget {
         title: '${model.interimResult[i][0]}',
         content: '${model.interimResult[i][1]}',
       ));
+      interimResult.add(const SizedBox(height: 20));
     }
 
     return Column(
@@ -287,12 +288,11 @@ class _ShowResultWidget extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         interimResult.isNotEmpty ?
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Row(
-            children: interimResult,
-          ),
+        Column(
+          children: interimResult,
         ) : const SizedBox.shrink(),
+        _ShowMatrixWidget(title: 'ε', content: model.getUncertainty()),
+        const SizedBox(height: 20),
         _ShowMatrixWidget(
           title: 'X',
           content: model.getMatrixX(),

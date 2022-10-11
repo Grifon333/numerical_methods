@@ -6,6 +6,7 @@ class Lab3Model extends ChangeNotifier {
   final matrixCoefficient = List.generate(3, (_) => List.filled(3, 0.0));
   final matrixY = List.filled(3, 0.0);
   final matrixX = List.filled(3, 0.0);
+  final uncertainty = List.filled(3, 0.0);
   bool isShow = false;
   List interimResult = [];
 
@@ -77,13 +78,12 @@ class Lab3Model extends ChangeNotifier {
           sum += a[i][j] * matrixX[j];
         }
 
-        matrixX[i] = round((b[i] - sum) / a[i][i]);
+        matrixX[i] = (b[i] - sum) / a[i][i];
       }
     }
 
     interimResult.clear();
-    isShow = true;
-    notifyListeners();
+    resetData();
   }
 
   void calculateByLU() {
@@ -114,7 +114,7 @@ class Lab3Model extends ChangeNotifier {
           for (int j = 0; j < i; j++) {
             sum += l[i][j] * u[j][k];
           }
-          u[i][k] = round((a[i][k] - sum) / l[i][i]);
+          u[i][k] = (a[i][k] - sum) / l[i][i];
         }
         u[k][k] = 1;
       }
@@ -126,22 +126,22 @@ class Lab3Model extends ChangeNotifier {
       for (int k = 0; k < i; k++) {
         sum += l[i][k] * y[k];
       }
-      y[i] = round((b[i] - sum) / l[i][i]);
+      y[i] = (b[i] - sum) / l[i][i];
     }
 
-    matrixX[n - 1] = round(y[n - 1]);
+    matrixX[n - 1] = y[n - 1];
     for (int i = n - 2; i >= 0; i--) {
       double sum = 0;
       for (int k = i + 1; k < n; k++) {
         sum += u[i][k] * matrixX[k];
       }
-      matrixX[i] = round(y[i] - sum);
+      matrixX[i] = y[i] - sum;
     }
 
     interimResult.clear();
     StringBuffer sb = StringBuffer();
     for (int i = 0; i < l.length; i++) {
-      sb.write(l[i].join('\t\t\t'));
+      sb.write(l[i].map((e) => round(e)).join('\t\t\t'));
       if (i == l.length - 1) {
         continue;
       }
@@ -152,7 +152,7 @@ class Lab3Model extends ChangeNotifier {
 
     sb = StringBuffer();
     for (int i = 0; i < u.length; i++) {
-      sb.write(u[i].join('\t\t\t'));
+      sb.write(u[i].map((e) => round(e)).join('\t\t\t'));
       if (i == u.length - 1) {
         continue;
       }
@@ -161,8 +161,7 @@ class Lab3Model extends ChangeNotifier {
     String uStr = sb.toString();
     interimResult.add(['U', uStr]);
 
-    isShow = true;
-    notifyListeners();
+    resetData();
   }
 
   void calculateBySquareRoot() {
@@ -174,9 +173,9 @@ class Lab3Model extends ChangeNotifier {
     int n = a.length;
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-        a[i][j] = matrixCoefficient[i][j];
+        a[2-i][j] = matrixCoefficient[i][j];
       }
-      b[i] = matrixY[i];
+      b[2-i] = matrixY[i];
     }
 
     t[0][0] = sqrt(a[0][0]);
@@ -213,19 +212,19 @@ class Lab3Model extends ChangeNotifier {
       y[i] = (b[i] - sum) / t[i][i];
     }
 
-    matrixX[n - 1] = round(y[n - 1] / t[n - 1][n - 1]);
+    matrixX[n - 1] = y[n - 1] / t[n - 1][n - 1];
     for (int i = n - 2; i >= 0; i--) {
       double sum = 0;
       for (int k = n - 1; k > i; k--) {
         sum += t[i][k] * matrixX[k];
       }
-      matrixX[i] = round((y[i] - sum) / t[i][i]);
+      matrixX[i] = (y[i] - sum) / t[i][i];
     }
 
     interimResult.clear();
     StringBuffer sb = StringBuffer();
     for (int i = 0; i < t.length; i++) {
-      sb.write(t[i].join('\t\t\t'));
+      sb.write(t[i].map((e) => round(e)).join('\t\t\t'));
       if (i == t.length - 1) {
         continue;
       }
@@ -234,8 +233,7 @@ class Lab3Model extends ChangeNotifier {
     String tStr = sb.toString();
     interimResult.add(['T', tStr]);
 
-    isShow = true;
-    notifyListeners();
+    resetData();
   }
 
   double module(double value) {
@@ -246,7 +244,7 @@ class Lab3Model extends ChangeNotifier {
   }
 
   double round(double number) {
-    return (number * 100).roundToDouble() / 100;
+    return (number * 1000).roundToDouble() / 1000;
   }
 
   String getMatrixCoefficient() {
@@ -266,6 +264,23 @@ class Lab3Model extends ChangeNotifier {
   }
 
   String getMatrixX() {
-    return matrixX.join('\n');
+    return matrixX.map((e) => round(e)).join('\n');
+  }
+
+  String getUncertainty() {
+    return uncertainty.map((e) => round(e)).join('\n');
+  }
+
+  void resetData() {
+    for (int i = 0; i < 3; i++) {
+      double dif = matrixCoefficient[i][0] * matrixX[0] +
+          matrixCoefficient[i][1] * matrixX[1] +
+          matrixCoefficient[i][2] * matrixX[2] -
+          matrixY[i];
+      uncertainty[i] = module(dif);
+    }
+    isShow = true;
+    print(uncertainty);
+    notifyListeners();
   }
 }
