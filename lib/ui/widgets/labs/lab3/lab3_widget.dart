@@ -266,6 +266,7 @@ class _ShowResultWidget extends StatelessWidget {
       interimResult.add(_ShowMatrixWidget(
         title: '${model.interimResult[i][0]}',
         content: '${model.interimResult[i][1]}',
+        isBold: false,
       ));
       interimResult.add(const SizedBox(height: 20));
     }
@@ -278,24 +279,32 @@ class _ShowResultWidget extends StatelessWidget {
             _ShowMatrixWidget(
               title: 'A',
               content: model.getMatrixCoefficient(),
+              isBold: false,
             ),
             const SizedBox(width: 50),
             _ShowMatrixWidget(
               title: 'B',
               content: model.getMatrixB(),
+              isBold: false,
             ),
           ],
         ),
         const SizedBox(height: 20),
-        interimResult.isNotEmpty ?
-        Column(
-          children: interimResult,
-        ) : const SizedBox.shrink(),
-        _ShowMatrixWidget(title: 'ε', content: model.getUncertainty()),
+        interimResult.isNotEmpty
+            ? Column(
+                children: interimResult,
+              )
+            : const SizedBox.shrink(),
+        _ShowMatrixWidget(
+          title: 'ε',
+          content: model.getUncertainty(),
+          isBold: false,
+        ),
         const SizedBox(height: 20),
         _ShowMatrixWidget(
           title: 'X',
           content: model.getMatrixX(),
+          isBold: true,
         ),
       ],
     );
@@ -305,11 +314,13 @@ class _ShowResultWidget extends StatelessWidget {
 class _ShowMatrixWidget extends StatelessWidget {
   final String title;
   final String content;
+  final bool isBold;
 
   const _ShowMatrixWidget({
     Key? key,
     required this.title,
     required this.content,
+    required this.isBold,
   }) : super(key: key);
 
   @override
@@ -318,29 +329,30 @@ class _ShowMatrixWidget extends StatelessWidget {
       children: [
         Text(
           '$title = ',
-          style: const TextStyle(
-            fontSize: 16,
-          ),
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: isBold == true ? FontWeight.w600 : FontWeight.normal),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Container(
             color: Colors.black,
-            width: 1,
+            width: isBold ? 1.5 : 1,
             height: 60,
           ),
         ),
         Text(
           content,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
+            fontWeight: isBold == true ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Container(
             color: Colors.black,
-            width: 1,
+            width: isBold ? 1.5 : 1,
             height: 60,
           ),
         )
