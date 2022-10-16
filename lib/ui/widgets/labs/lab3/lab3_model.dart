@@ -280,7 +280,6 @@ class Lab3Model extends ChangeNotifier {
       uncertainty[i] = module(dif);
     }
     isShow = true;
-    print(uncertainty);
     notifyListeners();
   }
 }

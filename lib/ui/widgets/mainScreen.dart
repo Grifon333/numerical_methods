@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:numerical_methods/Theme/app_colors.dart';
 import 'package:numerical_methods/Theme/app_text_style.dart';
+import 'package:numerical_methods/ui/Navigation/main_navigation.dart';
 
 class Example extends StatelessWidget {
   const Example({Key? key}) : super(key: key);
@@ -52,7 +53,7 @@ class _ListButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const count = 4;
+    final count = MainNavigation().routes.length - 1;
     const all = 8;
 
     return SizedBox(
