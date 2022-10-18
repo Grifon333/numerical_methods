@@ -40,6 +40,7 @@ class _BodyWidget extends StatelessWidget {
         const SizedBox(height: 10),
         const _SelectMethodWidget(),
         const SizedBox(height: 10),
+        const SizedBox(height: 10),
         result,
         // _CalculateAreaWidget(),
       ],
@@ -158,24 +159,10 @@ class _ResultWidget extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Text(
-        'Result: ${model.result}\nsteps: ${model.n}',
+        'Result: \n${model.getResult()}\n\nSteps: ${model.result.length}',
         textAlign: TextAlign.start,
         style: const TextStyle(fontSize: 16),
       ),
     );
   }
 }
-
-// class _CalculateAreaWidget extends StatelessWidget {
-//   const _CalculateAreaWidget({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final model = NotifierProvider.watch<Lab5Model>(context);
-//     if (model == null) return const SizedBox.shrink();
-//     return ElevatedButton(
-//       onPressed: () => model.selectionMethod(),
-//       child: const Text('Calculate'),
-//     );
-//   }
-// }
