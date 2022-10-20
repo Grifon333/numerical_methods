@@ -266,30 +266,39 @@ class _ShowResultWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab4Model>(context);
     if (model == null) return const SizedBox.shrink();
+    final result = model.check()
+        ?
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Count iterations: ${model.countIterations}',
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _ShowMatrixWidget(
-          title: 'ε',
-          content: model.getUncertainty(),
-          isBold: false,
-        ),
-        const SizedBox(height: 10),
-        _ShowMatrixWidget(
-          title: 'X',
-          content: model.getResult(),
-          isBold: true,
-        ),
-      ],
-    );
+        // return
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Count iterations: ${model.countIterations}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _ShowMatrixWidget(
+                title: 'ε',
+                content: model.getUncertainty(),
+                isBold: false,
+              ),
+              const SizedBox(height: 10),
+              _ShowMatrixWidget(
+                title: 'X',
+                content: model.getResult(),
+                isBold: true,
+              ),
+            ],
+          )
+        : const Text(
+            'Invalid input: divergent function',
+            style: TextStyle(fontSize: 18),
+          );
+
+    return result;
   }
 }
 

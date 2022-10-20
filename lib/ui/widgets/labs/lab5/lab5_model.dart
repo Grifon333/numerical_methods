@@ -6,7 +6,7 @@ class Lab5Model extends ChangeNotifier {
   double a = 1.4;
   double b = 3;
   int n = 2;
-  double accurate = 0.00001;
+  double accurate = 0.001;
   List<String> result = [];
   bool isShow = false;
   Color btn1 = AppColors.main;

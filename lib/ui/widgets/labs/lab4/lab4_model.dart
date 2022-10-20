@@ -28,6 +28,11 @@ class Lab4Model extends ChangeNotifier {
   }
 
   void iterationMethod({required bool usePreviousX}) {
+    if (!check()) {
+      // throw Exception('Invalid input');
+      notifyListeners();
+      return;
+    }
     List<double> oldX = List.filled(3, 0);
     List<double> x = List.filled(3, 0);
 
@@ -67,6 +72,20 @@ class Lab4Model extends ChangeNotifier {
 
     isShow = true;
     notifyListeners();
+  }
+
+  bool check() {
+    for(int i = 0; i < a.length; i++) {
+      double sum = 0;
+      for(int j = 0; j < a[i].length; j++) {
+        if (i == j) continue;
+        sum += a[i][j];
+      }
+      if (a[i][i] < sum) {
+        return false;
+      }
+    }
+    return true;
   }
 
   double module(double value) {
