@@ -267,10 +267,7 @@ class _ShowResultWidget extends StatelessWidget {
     final model = NotifierProvider.watch<Lab4Model>(context);
     if (model == null) return const SizedBox.shrink();
     final result = model.check()
-        ?
-
-        // return
-        Column(
+        ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(

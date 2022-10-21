@@ -7,6 +7,8 @@ import 'package:numerical_methods/ui/widgets/labs/lab4/lab4_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab4/lab4_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab5/lab5_model.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab5/lab5_widget.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab6/lab6_model.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab6/lab6_widget.dart';
 import 'package:numerical_methods/ui/widgets/mainScreen.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/lab1_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab1/lab1_model.dart';
@@ -18,6 +20,7 @@ class MainNavigationNameRoute {
   static const lab3 = '/lab3';
   static const lab4 = '/lab4';
   static const lab5 = '/lab5';
+  static const lab6 = '/lab6';
 }
 
 class MainNavigation {
@@ -42,7 +45,11 @@ class MainNavigation {
     MainNavigationNameRoute.lab5: (context) => NotifierProvider(
           child: const Lab5Widget(),
           create: () => Lab5Model(),
-        )
+        ),
+    MainNavigationNameRoute.lab6: (context) => NotifierProvider(
+          child: const Lab6Widget(),
+          create: () => Lab6Model(),
+        ),
   };
   final initialRoute = MainNavigationNameRoute.main;
 }
