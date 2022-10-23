@@ -25,7 +25,7 @@ class _BodyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
+      child: ListView(
         children: const [
           _FormulaWidget(),
           SizedBox(height: 10),
@@ -97,45 +97,32 @@ class _ResultsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<Lab6Model>(context);
     if (model == null) return const SizedBox.shrink();
-    final indexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].join('\n');
-    const divider = Padding(
-      padding: EdgeInsets.all(0),
-      child: SizedBox(
-        height: 240,
-        width: 1,
-        child: ColoredBox(color: Colors.black),
-      ),
-    );
+    final matrix = model.transpMatrix;
 
     final result = model.isShow
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _ColumnWithResultWidget(
-                title: 'i',
-                content: indexes,
-              ),
-              divider,
-              _ColumnWithResultWidget(
-                title: 'x',
-                content: model.getX(),
-              ),
-              divider,
-              _ColumnWithResultWidget(
-                title: 'y',
-                content: model.getY(),
-              ),
-              divider,
-              _ColumnWithResultWidget(
-                title: 'f',
-                content: model.getF(),
-              ),
-              divider,
-              _ColumnWithResultWidget(
-                title: 'hf',
-                content: model.getStep(),
-              ),
-            ],
+        ? SizedBox(
+            height: 30 + matrix[0].length * 19,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return _ColumnWithResultWidget(
+                  content:
+                      matrix[index].map((e) => e == 0 ? ' ' : e).join('\n'),
+                  title: model.titles[index],
+                  count: matrix.length,
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const Padding(
+                  padding: EdgeInsets.all(0),
+                  child: SizedBox(
+                    width: 1,
+                    child: ColoredBox(color: Colors.black),
+                  ),
+                );
+              },
+              itemCount: matrix.length,
+            ),
           )
         : const SizedBox.shrink();
     return result;
@@ -143,19 +130,20 @@ class _ResultsWidget extends StatelessWidget {
 }
 
 class _ColumnWithResultWidget extends StatelessWidget {
-  final String content;
   final String title;
+  final String content;
+  final int count;
 
   const _ColumnWithResultWidget({
     Key? key,
-    required this.content,
     required this.title,
+    required this.content,
+    required this.count,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           title,
@@ -165,7 +153,7 @@ class _ColumnWithResultWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: SizedBox(
             height: 1,
-            width: (MediaQuery.of(context).size.width - 36) / 5,
+            width: (MediaQuery.of(context).size.width - 36) / count,
             child: const ColoredBox(color: Colors.black),
           ),
         ),

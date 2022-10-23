@@ -1,24 +1,17 @@
 import 'package:flutter/cupertino.dart';
 
 class Lab6Model extends ChangeNotifier {
-  // double xResult = 0;
-  // double yResult = 0;
-  List<double> xList = List.filled(11, 0);
-  List<double> yList = List.filled(11, 0);
-  List<double> fList = List.filled(11, 0);
-
-  List<double> k1List = List.filled(11, 0);
-  List<double> k2List = List.filled(11, 0);
-  List<double> k3List = List.filled(11, 0);
-  List<double> k4List = List.filled(11, 0);
-
-  List<double> stepList = List.filled(11, 0);
+  List<List<double>> result = [];
+  List<List<double>> transpMatrix = [];
+  List<String> titles = [];
   bool isShow = false;
+  double a = 3;
+  double b = 5;
+  double h = 0.2;
 
   void calculateByEulerMethod() {
     // int n = 2;
-    double a = 3;
-    double b = 5;
+    // double y0 = 1.7;
     double y0 = 1.7;
     _eulerMethod(a, y0, b);
 
@@ -34,8 +27,6 @@ class Lab6Model extends ChangeNotifier {
   }
 
   void calculateByRungeKuttaMethod() {
-    double a = 3;
-    double b = 5;
     double y0 = 1.7;
     _rungeKuttaMethod(a, y0, b);
   }
@@ -47,28 +38,31 @@ class Lab6Model extends ChangeNotifier {
     double b,
   ) {
     // double h = (b - x0) / n;
-    double h = 0.2;
     int k = 0;
-    double x, y;
-    xList[k] = x0;
-    yList[k] = y0;
-    fList[k] = formula(x0, y0);
-    stepList[k] = fList[k] * h;
+    result = List.generate(10, (_) => List.filled(5, 0));
+    titles = List.filled(5, '-');
+    titles[0] = 'i';
+    titles[1] = 'x';
+    titles[2] = 'y';
+    titles[3] = 'f';
+    titles[4] = '∆y';
+
     do {
-      x = x0;
-      y = y0;
-      y0 = y0 + h * formula(x, y);
-      x0 = x0 + h;
+      result[k][0] = k.toDouble() + 1;
+      result[k][1] = x0;
+      result[k][2] = y0;
+      double f = formula(x0, y0);
+      double step = h * f;
+      y0 += step;
+      x0 += h;
+
+      result[k][3] = f;
+      result[k][4] = step;
       k++;
-      xList[k] = x0;
-      yList[k] = y0;
-      fList[k] = formula(x0, y0);
-      stepList[k] = fList[k] * h;
     } while (x0 <= b);
 
-    // xResult = x;
-    // yResult = y;
     isShow = true;
+    _transpositionMatrix();
     notifyListeners();
   }
 
@@ -77,32 +71,63 @@ class Lab6Model extends ChangeNotifier {
     double y0,
     double b,
   ) {
-    double h = 0.2;
     int k = 0;
+    // int n = (b - x0) ~/ h;
+
+    // result = List.generate(5 * n + 4, (_) => List.filled(5, 0));
+    result = List.generate(50, (_) => List.filled(6, 0));
+    titles = List.filled(6, '-');
+    titles[0] = 'i';
+    titles[1] = 'x';
+    titles[2] = 'y';
+    titles[3] = 'f';
+    titles[4] = 'k';
+    titles[5] = '∆y';
 
     do {
-      xList[k] = x0;
-      yList[k] = y0;
+      result[k * 5][0] = k.toDouble() + 1;
+      result[k * 5][1] = x0;
+      result[k * 5 + 1][1] = x0 + h / 2;
+      result[k * 5 + 2][1] = x0 + h / 2;
+      result[k * 5 + 3][1] = x0 + h;
+      result[k * 5][2] = y0;
 
-      k1List[k] = h * formula(x0, y0);
-      k2List[k] = h * formula(xList[k] + h / 2, yList[k] + k1List[k] / 2);
-      k3List[k] = h * formula(xList[k] + h / 2, yList[k] + k2List[k] / 2);
-      k4List[k] = h * formula(xList[k] + h, yList[k] + k3List[k]);
+      double f1 = formula(x0, y0);
+      double k1 = h * f1;
+      result[k * 5 + 1][2] = y0 + k1 / 2;
+      double f2 = formula(x0 + h / 2, y0 + k1 / 2);
+      double k2 = h * f2;
+      result[k * 5 + 2][2] = y0 + k2 / 2;
+      double f3 = formula(x0 + h / 2, y0 + k2 / 2);
+      double k3 = h * f3;
+      result[k * 5 + 3][2] = y0 + k3;
+      double f4 = formula(x0 + h, y0 + k3);
+      double k4 = h * f4;
 
-      y0 = y0 + (k1List[k] + 2 * (k2List[k] + k3List[k]) + k4List[k]) / 6;
+      result[k * 5][3] = f1;
+      result[k * 5 + 1][3] = f2;
+      result[k * 5 + 2][3] = f3;
+      result[k * 5 + 3][3] = f4;
+
+      result[k * 5][4] = k1;
+      result[k * 5 + 1][4] = k2;
+      result[k * 5 + 2][4] = k3;
+      result[k * 5 + 3][4] = k4;
+
+      result[k * 5][5] = k1;
+      result[k * 5 + 1][5] = 2 * k2;
+      result[k * 5 + 2][5] = 2 * k3;
+      result[k * 5 + 3][5] = k4;
+
+      double sum = (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+      result[k * 5 + 4][5] = sum;
+      y0 += sum;
       x0 += h;
       k++;
     } while (x0 <= b);
 
-    xList[k] = x0;
-    yList[k] = y0;
-
-    k1List[k] = h * formula(x0, y0);
-    k2List[k] = h * formula(xList[k] + h / 2, yList[k] + k1List[k] / 2);
-    k3List[k] = h * formula(xList[k] + h / 2, yList[k] + k2List[k] / 2);
-    k4List[k] = h * formula(xList[k] + h, yList[k] + k3List[k]);
-
     isShow = true;
+    _transpositionMatrix();
     notifyListeners();
   }
 
@@ -114,19 +139,13 @@ class Lab6Model extends ChangeNotifier {
     return (value * 10000).roundToDouble() / 10000;
   }
 
-  String getX() {
-    return xList.map((e) => round(e)).join('\n');
-  }
-
-  String getY() {
-    return yList.map((e) => round(e)).join('\n');
-  }
-
-  String getF() {
-    return fList.map((e) => round(e)).join('\n');
-  }
-
-  String getStep() {
-    return stepList.map((e) => round(e)).join('\n');
+  void _transpositionMatrix() {
+    transpMatrix = List.generate(
+        result[0].length, (index) => List.filled(result.length, 0.0));
+    for (int i = 0; i < result.length; i++) {
+      for (int j = 0; j < result[i].length; j++) {
+        transpMatrix[j][i] = round(result[i][j]);
+      }
+    }
   }
 }
