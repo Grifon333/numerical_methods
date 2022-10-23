@@ -47,10 +47,15 @@ class _SelectMethodWidget extends StatelessWidget {
     if (model == null) return const SizedBox.shrink();
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton(
           onPressed: () => model.calculateByEulerMethod(),
           child: const Text('Euler'),
+        ),
+        ElevatedButton(
+          onPressed: () => model.calculateByRungeKuttaMethod(),
+          child: const Text('Runge Kutta'),
         ),
       ],
     );
