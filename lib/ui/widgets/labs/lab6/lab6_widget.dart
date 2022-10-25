@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab6/graph_by_points_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab6/lab6_model.dart';
 
 class Lab6Widget extends StatelessWidget {
@@ -23,15 +24,33 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab6Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView(
-        children: const [
-          _FormulaWidget(),
-          SizedBox(height: 10),
-          _SelectMethodWidget(),
-          SizedBox(height: 10),
-          _ResultsWidget(),
+        children: [
+          const _FormulaWidget(),
+          const SizedBox(height: 10),
+          const _SelectMethodWidget(),
+          const SizedBox(height: 10),
+          const _ResultsWidget(),
+          const SizedBox(height: 10),
+          model.isShow
+              ? Center(
+                child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                    child: GraphByPointsWidget(
+                        start: -10, end: 14, points: model.points),
+                  ),
+              )
+              : const SizedBox.shrink(),
         ],
       ),
     );

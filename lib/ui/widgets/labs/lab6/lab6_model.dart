@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 class Lab6Model extends ChangeNotifier {
   List<List<double>> result = [];
   List<List<double>> transpMatrix = [];
+  List<Offset> points = [];
   List<String> titles = [];
   bool isShow = false;
   double a = 3;
@@ -39,8 +40,9 @@ class Lab6Model extends ChangeNotifier {
   ) {
     // double h = (b - x0) / n;
     int k = 0;
-    result = List.generate(10, (_) => List.filled(5, 0));
+    result = List.generate(11, (_) => List.filled(5, 0));
     titles = List.filled(5, '-');
+    points.clear();
     titles[0] = 'i';
     titles[1] = 'x';
     titles[2] = 'y';
@@ -51,6 +53,7 @@ class Lab6Model extends ChangeNotifier {
       result[k][0] = k.toDouble() + 1;
       result[k][1] = x0;
       result[k][2] = y0;
+      points.add(Offset(x0, y0));
       double f = formula(x0, y0);
       double step = h * f;
       y0 += step;
@@ -60,6 +63,17 @@ class Lab6Model extends ChangeNotifier {
       result[k][4] = step;
       k++;
     } while (x0 <= b);
+
+    result[k][0] = k.toDouble() + 1;
+    result[k][1] = x0;
+    result[k][2] = y0;
+    points.add(Offset(x0, y0));
+    double f = formula(x0, y0);
+    double step = h * f;
+    y0 += step;
+    x0 += h;
+    result[k][3] = f;
+    result[k][4] = step;
 
     isShow = true;
     _transpositionMatrix();
@@ -77,6 +91,7 @@ class Lab6Model extends ChangeNotifier {
     // result = List.generate(5 * n + 4, (_) => List.filled(5, 0));
     result = List.generate(50, (_) => List.filled(6, 0));
     titles = List.filled(6, '-');
+    points.clear();
     titles[0] = 'i';
     titles[1] = 'x';
     titles[2] = 'y';
@@ -91,6 +106,7 @@ class Lab6Model extends ChangeNotifier {
       result[k * 5 + 2][1] = x0 + h / 2;
       result[k * 5 + 3][1] = x0 + h;
       result[k * 5][2] = y0;
+      points.add(Offset(x0, y0));
 
       double f1 = formula(x0, y0);
       double k1 = h * f1;
