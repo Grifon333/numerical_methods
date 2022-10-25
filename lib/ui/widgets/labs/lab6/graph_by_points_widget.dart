@@ -16,7 +16,7 @@ class GraphByPointsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double heightParent = 300;
+    double heightParent = 400;
     double widthParent = MediaQuery.of(context).size.width - 32;
 
     final width = end - start;
@@ -72,42 +72,22 @@ class _MyPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..color = Colors.black
-      ..strokeWidth = 1.8;
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
 
-    // List<Offset> pointsList = [];
-    //
-    // for(int i = 0; i < points.length; i++) {
-    //   double dx = points[i].dx;
-    //   double dy = points[i].dy;
-    //   points[i] = Offset(toScreenX(dx, start, end), toScreenY(dy, down, up));
-    // }
-    // canvas.drawPoints(PointMode.points, pointsList, paint);
+    List<Offset> pointsList = [];
+    for (int i = 0; i < points.length; i++) {
+      final x = toScreenX(points[i].dx, start, end);
+      final y = toScreenY(points[i].dy, down, up);
+      // final xStart = toScreenX(points[i].dx, start, end);
+      // final yStart = toScreenY(points[i].dy, down, up);
+      // final xEnd = toScreenX(points[i + 1].dx, start, end);
+      // final yEnd = toScreenY(points[i + 1].dy, down, up);
 
-
-    // List<Offset> list = [];
-    // for (double i = start; i <= end; i += 0.01) {
-    //   double x = i;
-    //   double y;
-    //   // if (x <= xMin) {
-    //   //   y = 0;
-    //   // } else {
-    //   //   y = formula(x);
-    //   // }
-    //   final point = Offset(x, y);
-    //   list.add(point);
-    // }
-    //
-    for (int i = 0; i < points.length - 1; i++) {
-      final xStart = toScreenX(points[i].dx, start, end);
-      final yStart = toScreenY(points[i].dy, down, up);
-      final xEnd = toScreenX(points[i + 1].dx, start, end);
-      final yEnd = toScreenY(points[i + 1].dy, down, up);
-    //   // if (list[i].dx <= xMin && list[i + 1].dx <= xMin) continue;
-    //   // if (list[i].dx <= xMin && list[i + 1].dx > xMin) {
-    //   //   yStart = 1000;
-    //   // }
-      canvas.drawLine(Offset(xStart, yStart), Offset(xEnd, yEnd), paint);
+      pointsList.add(Offset(x, y));
+      // canvas.drawLine(Offset(x, y), Offset(x+1, y+1), paint);
     }
+    canvas.drawPoints(PointMode.points, pointsList, paint);
   }
 
   void drawCoordinateX(Size size, Canvas canvas) {
@@ -176,21 +156,21 @@ class _MyPainter extends CustomPainter {
   }
 
   double toScreenX(
-      double x,
-      double xMin,
-      double xMax, [
-        double screenXMin = 0.0,
-      ]) {
+    double x,
+    double xMin,
+    double xMax, [
+    double screenXMin = 0.0,
+  ]) {
     return (x - xMin) * (sizeScreen.width - screenXMin) / (xMax - xMin) +
         screenXMin;
   }
 
   double toScreenY(
-      double y,
-      double yMin,
-      double yMax, [
-        double screenYMin = 0.0,
-      ]) {
+    double y,
+    double yMin,
+    double yMax, [
+    double screenYMin = 0.0,
+  ]) {
     return (sizeScreen.height -
         (y - yMin) * (sizeScreen.height - screenYMin) / (yMax - yMin));
   }

@@ -11,20 +11,8 @@ class Lab6Model extends ChangeNotifier {
   double h = 0.2;
 
   void calculateByEulerMethod() {
-    // int n = 2;
-    // double y0 = 1.7;
     double y0 = 1.7;
     _eulerMethod(a, y0, b);
-
-    // double dif;
-    // double z1 = yResult;
-    // do {
-    //   n *= 2;
-    //   _eulerMethod(n, a, y0, b);
-    //   double z2 = yResult;
-    //   dif = max(z2, z1) - min(z2, z1);
-    //   z1 = z2;
-    // } while (dif > 0.01);
   }
 
   void calculateByRungeKuttaMethod() {
@@ -33,12 +21,10 @@ class Lab6Model extends ChangeNotifier {
   }
 
   void _eulerMethod(
-    // int n,
     double x0,
     double y0,
     double b,
   ) {
-    // double h = (b - x0) / n;
     int k = 0;
     result = List.generate(11, (_) => List.filled(5, 0));
     titles = List.filled(5, '-');
@@ -86,9 +72,6 @@ class Lab6Model extends ChangeNotifier {
     double b,
   ) {
     int k = 0;
-    // int n = (b - x0) ~/ h;
-
-    // result = List.generate(5 * n + 4, (_) => List.filled(5, 0));
     result = List.generate(50, (_) => List.filled(6, 0));
     titles = List.filled(6, '-');
     points.clear();

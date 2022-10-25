@@ -14,6 +14,7 @@ class Lab7Model extends ChangeNotifier {
   late List<double> yReal;
   late List<double> delta;
   bool isShow = false;
+  List<Offset> points = [];
 
   void _initialization() {
     xNodes = List.filled(n, 0.0);
@@ -24,6 +25,7 @@ class Lab7Model extends ChangeNotifier {
     yIteration = List.filled(size, 0.0);
     yReal = List.filled(size, 0.0);
     delta = List.filled(size, 0.0);
+    points.clear();
   }
 
   void interpolation() {
@@ -49,6 +51,7 @@ class Lab7Model extends ChangeNotifier {
       yIteration[count] = result;
       yReal[count] = y;
       delta[count] = d;
+      points.add(Offset(z, result));
 
       count++;
     }

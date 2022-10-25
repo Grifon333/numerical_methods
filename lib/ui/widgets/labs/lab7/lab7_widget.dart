@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numerical_methods/Library/Widgets/Inherited/provider.dart';
+import 'package:numerical_methods/ui/widgets/labs/lab6/graph_by_points_widget.dart';
 import 'package:numerical_methods/ui/widgets/labs/lab7/lab7_model.dart';
 
 class Lab7Widget extends StatelessWidget {
@@ -23,18 +24,40 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.watch<Lab7Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          _FormulaWidget(),
-          Divider(
-            thickness: 2,
+      child: ListView(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _FormulaWidget(),
+              const Divider(
+                thickness: 2,
+              ),
+              const _ButtonWidget(),
+              const SizedBox(height: 10),
+              const _ResultWidget(),
+              const SizedBox(height: 20),
+              model.isShow
+                  ? Center(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.red,
+                      width: 2,
+                    ),
+                  ),
+                  child: GraphByPointsWidget(
+                      start: -3, end: 13, points: model.points),
+                ),
+              )
+                  : const SizedBox.shrink(),
+            ],
           ),
-          _ButtonWidget(),
-          SizedBox(height: 10),
-          _ResultWidget(),
         ],
       ),
     );

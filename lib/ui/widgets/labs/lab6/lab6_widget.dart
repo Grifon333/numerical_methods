@@ -47,7 +47,7 @@ class _BodyWidget extends StatelessWidget {
                       ),
                     ),
                     child: GraphByPointsWidget(
-                        start: -10, end: 14, points: model.points),
+                        start: -6, end: 11, points: model.points),
                   ),
               )
               : const SizedBox.shrink(),
