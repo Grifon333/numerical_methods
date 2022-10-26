@@ -1,16 +1,19 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
-class GraphByPointsWidget extends StatelessWidget {
+class Graph extends StatelessWidget {
   final double start;
   final double end;
   final List<Offset> points;
+  final double Function(double) formula;
 
-  const GraphByPointsWidget({
+  const Graph({
     Key? key,
     required this.start,
     required this.end,
     required this.points,
+    required this.formula,
   }) : super(key: key);
 
   @override
@@ -35,6 +38,7 @@ class GraphByPointsWidget extends StatelessWidget {
             up: up,
             down: down,
             points: points,
+            formula: formula,
           ),
         ),
       ),
@@ -49,6 +53,7 @@ class _MyPainter extends CustomPainter {
   final double up;
   final double down;
   final List<Offset> points;
+  final double Function(double) formula;
 
   _MyPainter({
     required this.sizeScreen,
@@ -57,6 +62,7 @@ class _MyPainter extends CustomPainter {
     required this.up,
     required this.down,
     required this.points,
+    required this.formula,
   });
 
   @override
@@ -68,19 +74,42 @@ class _MyPainter extends CustomPainter {
   }
 
   void drawGraph(Size size, Canvas canvas) {
-    final paint = Paint()
+    final paintPoints = Paint()
+      ..style = PaintingStyle.fill
+      ..color = Colors.red
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    final paintGraph = Paint()
       ..style = PaintingStyle.fill
       ..color = Colors.black
-      ..strokeWidth = 4
+      ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
+    // graph
+    List<Offset> list = [];
+    for (double i = 1; i <= 10; i += 0.01) {
+      double x = i;
+      double y;
+      y = formula(x);
+      final point = Offset(x, y);
+      list.add(point);
+    }
+    for (int i = 0; i < list.length - 1; i++) {
+      final xStart = toScreenX(list[i].dx, start, end);
+      var yStart = toScreenY(list[i].dy, down, up);
+      final xEnd = toScreenX(list[i + 1].dx, start, end);
+      final yEnd = toScreenY(list[i + 1].dy, down, up);
+      canvas.drawLine(Offset(xStart, yStart), Offset(xEnd, yEnd), paintGraph);
+    }
+
+    // points
     List<Offset> pointsList = [];
     for (int i = 0; i < points.length; i++) {
       final x = toScreenX(points[i].dx, start, end);
       final y = toScreenY(points[i].dy, down, up);
       pointsList.add(Offset(x, y));
     }
-    canvas.drawPoints(PointMode.points, pointsList, paint);
+    canvas.drawPoints(PointMode.points, pointsList, paintPoints);
   }
 
   void drawCoordinateX(Size size, Canvas canvas) {
