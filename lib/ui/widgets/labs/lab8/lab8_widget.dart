@@ -31,7 +31,9 @@ class _BodyWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          const _FormulaWidget(),
+          const _Formula1Widget(),
+          const _Formula2Widget(),
+          const _Formula3Widget(),
           const _ButtonWidget(),
           model.isShow
               ? Column(
@@ -39,7 +41,11 @@ class _BodyWidget extends StatelessWidget {
                     SizedBox(height: 20),
                     _GraphWidget(),
                     SizedBox(height: 20),
-                    _ResultFormulaWidget(),
+                    _ResultFormula1Widget(),
+                    SizedBox(height: 6),
+                    _ResultFormula2Widget(),
+                    SizedBox(height: 6),
+                    _ResultFormula3Widget(),
                   ],
                 )
               : const SizedBox.shrink(),
@@ -49,13 +55,14 @@ class _BodyWidget extends StatelessWidget {
   }
 }
 
-class _FormulaWidget extends StatelessWidget {
-  const _FormulaWidget({Key? key}) : super(key: key);
+class _Formula1Widget extends StatelessWidget {
+  const _Formula1Widget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(fontSize: 20);
-    const styleIndex = TextStyle(fontSize: 10);
+    const color = Colors.green;
+    const style = TextStyle(fontSize: 20, color: color);
+    const styleIndex = TextStyle(fontSize: 11, color: color);
 
     return Row(
       children: [
@@ -66,7 +73,7 @@ class _FormulaWidget extends StatelessWidget {
             const SizedBox(
               height: 1.2,
               width: 70,
-              child: ColoredBox(color: Colors.black),
+              child: ColoredBox(color: color),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -80,6 +87,62 @@ class _FormulaWidget extends StatelessWidget {
             )
           ],
         ),
+      ],
+    );
+  }
+}
+
+class _Formula2Widget extends StatelessWidget {
+  const _Formula2Widget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const color = Colors.blue;
+    const style = TextStyle(fontSize: 20, color: color);
+    const styleIndex = TextStyle(fontSize: 11, color: color);
+    const styleSmallIndex = TextStyle(fontSize: 7, color: color);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Text('y = a', style: style),
+        const Text('1', style: styleIndex),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('e', style: style),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: const [
+                Text('a', style: styleIndex),
+                Text('2', style: styleSmallIndex),
+                Text('x', style: styleIndex),
+              ],
+            )
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class _Formula3Widget extends StatelessWidget {
+  const _Formula3Widget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const color = Colors.purple;
+    const style = TextStyle(fontSize: 20, color: color);
+    const styleIndex = TextStyle(fontSize: 11, color: color);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: const [
+        Text('y = a', style: style),
+        Text('1', style: styleIndex),
+        Text(' + a', style: style),
+        Text('2', style: styleIndex),
+        Text('x', style: style),
       ],
     );
   }
@@ -115,20 +178,21 @@ class _GraphWidget extends StatelessWidget {
       ),
       child: Graph(
         start: -2,
-        end: 15,
+        end: 13,
         points: model.points,
-        formula: model.formula,
+        formula: [model.formula1, model.formula2, model.formula3],
       ),
     );
   }
 }
 
-class _ResultFormulaWidget extends StatelessWidget {
-  const _ResultFormulaWidget({Key? key}) : super(key: key);
+class _ResultFormula1Widget extends StatelessWidget {
+  const _ResultFormula1Widget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(fontSize: 18);
+    const color = Colors.green;
+    const style = TextStyle(fontSize: 18, color: color);
     final model = NotifierProvider.watch<Lab8Model>(context);
     if (model == null) return const SizedBox.shrink();
 
@@ -141,14 +205,58 @@ class _ResultFormulaWidget extends StatelessWidget {
             const SizedBox(
               height: 1.2,
               width: 110,
-              child: ColoredBox(color: Colors.black),
+              child: ColoredBox(color: color),
             ),
             Text(
-              '${model.getA1()}${model.getA2()}x',
+              '${model.getA1_1()}${model.getA2_1()}x',
               style: style,
             ),
           ],
         ),
+        Text(';  ∆ = ${model.getUncertainty1()}', style: style),
+      ],
+    );
+  }
+}
+
+class _ResultFormula2Widget extends StatelessWidget {
+  const _ResultFormula2Widget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const color = Colors.blue;
+    const style = TextStyle(fontSize: 20, color: color);
+    const styleIndex = TextStyle(fontSize: 11, color: color);
+    final model = NotifierProvider.watch<Lab8Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('y = ${model.getA1_2()}e', style: style),
+        Text('${model.getA2_2()}x', style: styleIndex),
+        Text(';  ∆ = ${model.getUncertainty2()}', style: style),
+      ],
+    );
+  }
+}
+
+class _ResultFormula3Widget extends StatelessWidget {
+  const _ResultFormula3Widget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const color = Colors.purple;
+    const style = TextStyle(fontSize: 20, color: color);
+    final model = NotifierProvider.watch<Lab8Model>(context);
+    if (model == null) return const SizedBox.shrink();
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+            'y = ${model.getA1_3()} + ${model.getA2_3()}x;  ∆ = ${model.getUncertainty3()}',
+            style: style),
       ],
     );
   }

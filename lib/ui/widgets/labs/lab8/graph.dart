@@ -6,7 +6,7 @@ class Graph extends StatelessWidget {
   final double start;
   final double end;
   final List<Offset> points;
-  final double Function(double) formula;
+  final List<double Function(double)> formula;
 
   const Graph({
     Key? key,
@@ -19,7 +19,10 @@ class Graph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double heightParent = 400;
-    double widthParent = MediaQuery.of(context).size.width - 32;
+    double widthParent = MediaQuery
+        .of(context)
+        .size
+        .width - 32;
 
     final width = end - start;
     final height = heightParent * width / widthParent;
@@ -53,7 +56,7 @@ class _MyPainter extends CustomPainter {
   final double up;
   final double down;
   final List<Offset> points;
-  final double Function(double) formula;
+  final List<double Function(double)> formula;
 
   _MyPainter({
     required this.sizeScreen,
@@ -84,22 +87,11 @@ class _MyPainter extends CustomPainter {
       ..color = Colors.black
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
+    final colorsList = [Colors.green, Colors.blue, Colors.purple];
 
-    // graph
-    List<Offset> list = [];
-    for (double i = 1; i <= 10; i += 0.01) {
-      double x = i;
-      double y;
-      y = formula(x);
-      final point = Offset(x, y);
-      list.add(point);
-    }
-    for (int i = 0; i < list.length - 1; i++) {
-      final xStart = toScreenX(list[i].dx, start, end);
-      var yStart = toScreenY(list[i].dy, down, up);
-      final xEnd = toScreenX(list[i + 1].dx, start, end);
-      final yEnd = toScreenY(list[i + 1].dy, down, up);
-      canvas.drawLine(Offset(xStart, yStart), Offset(xEnd, yEnd), paintGraph);
+    for (int i = 0; i < formula.length; i++) {
+      paintGraph.color = colorsList[i];
+      drawListLines(formula[i], canvas, paintGraph);
     }
 
     // points
@@ -110,6 +102,26 @@ class _MyPainter extends CustomPainter {
       pointsList.add(Offset(x, y));
     }
     canvas.drawPoints(PointMode.points, pointsList, paintPoints);
+  }
+
+  void drawListLines(double Function(double) formula, Canvas canvas,
+      Paint paintGraph) {
+    List<Offset> list = [];
+    for (double i = 1; i <= 10; i += 0.01) {
+      double x = i;
+      double y;
+      y = formula(x);
+      final point = Offset(x, y);
+      list.add(point);
+    }
+
+    for (int i = 0; i < list.length - 1; i++) {
+      final xStart = toScreenX(list[i].dx, start, end);
+      var yStart = toScreenY(list[i].dy, down, up);
+      final xEnd = toScreenX(list[i + 1].dx, start, end);
+      final yEnd = toScreenY(list[i + 1].dy, down, up);
+      canvas.drawLine(Offset(xStart, yStart), Offset(xEnd, yEnd), paintGraph);
+    }
   }
 
   void drawCoordinateX(Size size, Canvas canvas) {
@@ -177,22 +189,20 @@ class _MyPainter extends CustomPainter {
     return true;
   }
 
-  double toScreenX(
-    double x,
-    double xMin,
-    double xMax, [
-    double screenXMin = 0.0,
-  ]) {
+  double toScreenX(double x,
+      double xMin,
+      double xMax, [
+        double screenXMin = 0.0,
+      ]) {
     return (x - xMin) * (sizeScreen.width - screenXMin) / (xMax - xMin) +
         screenXMin;
   }
 
-  double toScreenY(
-    double y,
-    double yMin,
-    double yMax, [
-    double screenYMin = 0.0,
-  ]) {
+  double toScreenY(double y,
+      double yMin,
+      double yMax, [
+        double screenYMin = 0.0,
+      ]) {
     return (sizeScreen.height -
         (y - yMin) * (sizeScreen.height - screenYMin) / (yMax - yMin));
   }
